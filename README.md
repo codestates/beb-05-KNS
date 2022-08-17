@@ -1,3 +1,4 @@
 # beb-05-KNS
 
-KNS gazua!!!!!
+KNS gazua!!!!
+update go
