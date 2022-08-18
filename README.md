@@ -2,3 +2,4 @@
 
 KNS gazua!!!
 update go
+gogogogogo!!
