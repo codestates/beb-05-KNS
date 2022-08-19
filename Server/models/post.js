@@ -1,6 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
-const Sequelize = require("sequelize");
+const { Model, Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
     class post extends Model {
@@ -15,42 +14,31 @@ module.exports = (sequelize, DataTypes) => {
     }
     post.init(
         {
-            id: {
-                autoIncrement: true,
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                primaryKey: true,
-            },
-            userId: {
-                type: DataTypes.STRING(255),
-                allowNull: true,
-            },
             title: {
-                type: DataTypes.STRING(255),
+                type: DataTypes.STRING(300),
                 allowNull: true,
             },
             content: {
-                type: DataTypes.STRING(3000),
+                type: DataTypes.STRING(1000),
                 allowNull: true,
             },
             img: {
-                type: DataTypes.STRING(255),
+                type: DataTypes.STRING(300),
                 allowNull: true,
-                },
-            
+                },          
             hit: {
-                type:DataTypes.INTEGER(30),
+                type:DataTypes.INTEGER(50),
                 allowNull: true, 
                 defaultValue: 0
             },
             like: {
-                type:DataTypes.INTEGER(30),
+                type:DataTypes.INTEGER(50),
                 allowNull: true, 
                 defaultValue: 0
             },
             createdAt: {
                 type: Sequelize.DATE,
-                field: "created_at",
+                field: "createdAt",
             },
         },
         {
