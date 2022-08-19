@@ -1,6 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
-const Sequelize = require("sequelize");
+const { Model, Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
     class user extends Model {
@@ -14,17 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     user.init(
-        {
-            id: {
-              autoIncrement: true,
-              type: DataTypes.INTEGER,
-              allowNull: false,
-              primaryKey: true,
-            },
-            userId: {
-              type:DataTypes.STRING(100),
-              allowNull: false,
-            } ,
+        {          
             userName: {
                 type:DataTypes.STRING(100),
                 allowNull: false,
@@ -34,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false, 
             },
             address: {
-                type:DataTypes.STRING(255),
+                type:DataTypes.STRING(300),
                 allowNull: true,
             },
             tokenAmount: {
@@ -48,11 +37,11 @@ module.exports = (sequelize, DataTypes) => {
               defaultValue: 0
             },
             mnemonicWord:{
-              type: DataTypes.STRING(255),
+              type: DataTypes.STRING(300),
               allowNull: true,
             },
             privateKey: {
-              type: DataTypes.STRING(255),
+              type: DataTypes.STRING(300),
               allowNull: true,
             },            
             createdAt: {
@@ -66,20 +55,7 @@ module.exports = (sequelize, DataTypes) => {
           tableName: "users",
           timestamps: true,
           updatedAt: false,
-          indexes: [
-            {
-              name: "PRIMARY",
-              unique: true,
-              using: "BTREE",
-              fields: [{ name: "id" }],
-            },
-            {
-              name: "userId",
-              unique: true,
-              using: "BTREE",
-              fields: [{ name: "userId" }],
-            },
-          ],
+          
         }
     );
     user.associate = function (models) {
@@ -95,12 +71,6 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade',
             onUpdate: 'cascade'
         });
-        user.hasMany(models.nft,{
-          foreignKey: "userId",
-          sourceKey: "id",
-          onDelete: 'cascade',
-          onUpdate: 'cascade'
-      });
     };
     return user;
 };
