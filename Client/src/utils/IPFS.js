@@ -52,25 +52,3 @@ export async function pinataUploadJSON(data){
     return null;
   });
 }
-
-async function testIpfs(NFTFile){
-    // IFPS 업로드 테스트 Function
-    // META DATA 업로드 & IMAGE 업로드
-    // HASH 업로드 된 게이트웨이 해시출력
-     
-    const metaDataJson ={
-        name: "NFTName",
-        description: "NFTdesc",
-        price: "100",
-        ExLink: "",
-    };
-
-    const upLoadIPFSUrl = await pinataUpload(NFTFile);
-    metaDataJson.ExLink = upLoadIPFSUrl;
-    console.log(pinata_gwUrl+upLoadIPFSUrl); // NFT URL
-
-    const pinata_gwUrl = 'https://gateway.pinata.cloud/ipfs/';
-    const upLoadIPFSMetaDataHash = await pinataUploadJSON(metaDataJson);
-    console.log(pinata_gwUrl+upLoadIPFSMetaDataHash); // JSON URL
-
-}
