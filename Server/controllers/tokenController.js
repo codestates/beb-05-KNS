@@ -1,15 +1,81 @@
-exports.erc20Get = async(req, res) => {
-  try {
-        res.status(200).send("ERC20 토큰 조회")
-      } catch (e) {
-        throw Error(e)
-      }
-};
+const {user} = require('../models');
 
-exports.erc20Post = async(req, res) => {
-  try {
-        res.status(200).send("ERC20 토큰 전송")
-      } catch (e) {
-        throw Error(e)
+const {isAuthorized} = require('./webToken')
+const {asyncWrapper} = require("../errors/async");
+const CustomError = require("../errors/custom-error");
+const StatusCodes = require("http-status-codes");
+
+module.exports = {
+
+    //User ID를 받아서 토큰 수량 응답
+    geTokenByUserId: asyncWrapper(async (req, res) => {
+      const userId = req.params.id;
+        if (userId === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
+        }
+        //전달받은 user Id를 가진 user를 찾아옴
+        const userData = await user.findOne({
+            where: {id: userId},
+        });
+        
+        //해당 id를 가진 post 없으면 조회할 데이터가 없음을 응답
+        if (!userData) {
+            //404 not found
+            throw new CustomError(`사용자 ${userId} 가 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
+        }
+
+        const {id, tokenAmount} = userData;
+
+        res.status(200).json({
+            status: "successful operation",
+            data: {
+                id,
+                tokenAmount
+            },
+        });
+    }),
+
+    //ERC20 토큰 전송
+    transferToken : asyncWrapper(async (req, res) => {
+      const userId = req.params.id;
+      const {toUserId, sendTokenAmount} = req.body;
+
+      if (toUserId === undefined || sendTokenAmount === undefined) {
+          throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
-};
+
+      const toUserData = await user.findOne({
+          where: {id: toUserId},
+      });
+      
+      if (!toUserData) {
+          //404 not found
+          throw new CustomError(`토큰 전송할 사용자 정보가 없습니다.`, StatusCodes.NOT_FOUND);
+      }
+
+      // 토큰 전송할 유저 정보를 가져옴
+      const fromUserData = await user.findOne({
+        where: {id: userId},
+      });
+
+      const {fromTokenAmount} = fromUserData;
+
+      // 보유 토큰보다 더 많이 전송시 메시지
+      if(fromTokenAmount < sendTokenAmount) {
+          throw new CustomError(`보유 토큰보다 전송할 토큰이 더 많습니다.`, StatusCodes.NOT_FOUND);
+      }
+
+      // 토큰 전송할 유저의 토큰 차감
+      await fromUserData.update({
+        tokenAmount: tokenAmount - sendTokenAmount
+      });
+
+      // 토큰 전송 대상 유저의 토큰 증감
+      await toUserData.update({
+        tokenAmount: tokenAmount + sendTokenAmount
+      });
+      
+      res.status(StatusCodes.OK).json({status: "successful operation"});
+
+  }),
+}

@@ -14,14 +14,14 @@ const cookieParser = require('cookie-parser');
 //const errorHandler = require('./errors/error-handler')
 
 const app = express();
-const PORT = 4000;
+const PORT = 4040;
 
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ['https://localhost:3000'],
+        origin: ['https://localhost:4000'],
         credentials: true,
         methods: ['GET', 'POST', 'OPTIONS']
     })
@@ -37,8 +37,8 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openAPIDocument));
 //app.use(errorHandler)
 
 models.sequelize.sync().then( () => {
-  app.listen(8000, async () => {
-    console.log(`DB연결 성공 및 port 구동중`);
+  app.listen(PORT, async () => {
+    console.log("DB연결 성공 및 port 구동중");
   });
 
     /* if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')) {

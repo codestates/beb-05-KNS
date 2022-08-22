@@ -1,17 +1,17 @@
-const express = require("express");
-const router = express.Router();
-const controller = require("../controllers/postController");
+const router = require('express').Router();
+const {writePost,updatePost,deletePost,likePost,getPostById,getPostByUserId,
+       getAllPosts,writeComment,updateComment,deleteComment} = require('../controllers/postController');
 
-router.get("/", controller.postGet);
-router.post("/", controller.postWrite);
-router.get("/:userID/post", controller.userPostInfo);
-router.get("/:postID", controller.postInfoGet);
-router.put("/:postID", controller.postRetouch);
-router.delete("/:postID", controller.postDelete);
-router.put("/:postID", controller.postLike);
-router.get("/:postID/comments", controller.commentGet);
-router.post("/:postID/comments", controller.commentPost);
-router.put("/:postID/comments", controller.commentRetouch);
-router.delete("/:postID/comments", controller.commentDelet);
+
+router.post('/post', writePost);
+router.get('/post', getAllPosts);
+router.put('/post/:postId', updatePost);
+router.delete('/post/:postId', deletePost);
+router.get('/post/:postId', getPostById);
+router.get('/post/:userId', getPostByUserId);
+router.put('/post/like/:postId', likePost);
+router.post('/post/:postId/comment', writeComment);
+router.put("/post/comment/:commentId", updateComment);
+router.delete("/post/comment/:commentId", deleteComment);
 
 module.exports = router;

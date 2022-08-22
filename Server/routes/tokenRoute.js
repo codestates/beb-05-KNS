@@ -1,8 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const controller = require("../controllers/tokenController");
+const router = require('express').Router();
+const {getTokenByUserId,transferToken} = require('../controllers/tokenController');
 
-router.get("/", controller.erc20Get);
-router.post("/:userID", controller.erc20Post);
+
+router.get('/token/:userId', getTokenByUserId);
+router.put('/token/:userId/transfer', transferToken);
+
 
 module.exports = router;
