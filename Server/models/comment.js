@@ -26,12 +26,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: Sequelize.DATE,
                 field: "createdAt",
             },
+            updatedAt: {
+                type: Sequelize.DATE,
+                field: "updatedAt",
+            },
         },
         {
             sequelize,
             modelName: 'comment',
             timestamps: true,
-            updatedAt: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'
         }
