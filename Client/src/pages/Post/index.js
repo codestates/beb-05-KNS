@@ -1,9 +1,10 @@
 import React from 'react';
+import  POST  from '../../components/POST';
 
 const post = () => {
     return (
     <div>
-        post
+    <POST />
     </div>
     )
 };
