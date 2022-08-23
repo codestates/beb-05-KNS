@@ -14,16 +14,21 @@ module.exports = {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
 
-        /* const decoded = await isAuthorized(req)
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
-        const userId = userInfo.id
+        const userId = userInfo.id;
+        
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
-        } */
+        }
 
-        const {userId, title, content, img} = req.body;
+        const {title, content, img} = req.body;
         // req.body에 필요한 값들이 없으면 Bad Request 에러 응답
         if (!title || !content) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.", StatusCodes.BAD_REQUEST);
@@ -52,7 +57,11 @@ module.exports = {
         if (req.body.title === undefined || req.body.content === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
-        const decoded = await isAuthorized(req)
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
@@ -60,12 +69,15 @@ module.exports = {
         const postData = await post.findOne({
             where: {id: postId},
         });
+
         if (!postData) {
             //404 not found
             throw new CustomError(`글번호 ${postId} 번이 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
         }
+        console.log(userId);
+        console.log(postData.userId);
 
-        if(!postData.userId === userId){
+        if(postData.userId !== userId){
             //403 사용자가 일치하지 않을 때
             throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
         }
@@ -85,7 +97,11 @@ module.exports = {
       if (postId === undefined) {
         throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
-      const decoded = await isAuthorized(req)
+      const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
       const userInfo = await user.findOne({
           where: {id: decoded.id},
       });
@@ -98,13 +114,13 @@ module.exports = {
           throw new CustomError(`글번호 ${postId} 번이 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
       }
 
-      if(!postData.userId === userId){
+      if(postData.userId !== userId){
           //403 사용자가 일치하지 않을 때
           throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
       }
 
-      await postData.destory({
-          where: { id: postId }
+      await postData.destroy({
+          where: { id: postId },
       });
 
       res.sendStatus(StatusCodes.NO_CONTENT); //204 
@@ -231,7 +247,11 @@ module.exports = {
             where: {id: postId},
         });
      
-        const decoded = await isAuthorized(req)
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+        
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
@@ -262,7 +282,11 @@ module.exports = {
         if (commentId === undefined || req.body.content === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
-        const decoded = await isAuthorized(req)
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
@@ -271,12 +295,12 @@ module.exports = {
             where: {id: commentId},
         });
         
-        if(!commentData.userId === userId){
+        if(commentData.userId !== userId){
             //403 사용자가 일치하지 않을 때
             throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
         }
         const {content} = req.body;
-        await postData.update({
+        await commentData.update({
             content: content
         });
         res.status(StatusCodes.OK).json({status: "successful operation", data: {commentId: commentData.id}});
@@ -289,7 +313,11 @@ module.exports = {
       if (commentId === undefined) {
         throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
-      const decoded = await isAuthorized(req)
+      const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
       const userInfo = await user.findOne({
           where: {id: decoded.id},
       });
@@ -298,13 +326,13 @@ module.exports = {
           where: { id: commentId }
       });
     
-      if(!commentData.userId === userId){
+      if(commentData.userId !== userId){
           //403 사용자가 일치하지 않을 때
           throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
       }
 
-      await commentData.destory({
-          where: { id: commentId }
+      await commentData.destroy({
+          where: { id: commentId },
       });
      
       res.sendStatus(StatusCodes.NO_CONTENT); //204 

@@ -51,30 +51,23 @@ module.exports = {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
         // 전달받은 user Id를 가진 post를 찾아옴
-        const postData = await post.findOne({
+        const data = await post.findAll({
             where: {userId: req.params.userId},
         });
         
+        //console.log(data);
+
         // 해당 user Id를 가진 post 없으면 조회할 데이터가 없음을 응답
-        if (!postData) {
+        if (!data || data.length === 0) {
             // 404 not found
             throw new CustomError(`조회할 게시글 정보가 없습니다.`, StatusCodes.NOT_FOUND);
         }
 
-        const {id, userId, title, content, img, hit, like, createdAt} = postData;
+        //const {id, userId, title, content, img, hit, like, createdAt} = data;
         
         res.status(200).json({
             status: "successful operation",
-            data: {
-                id,
-                userId,
-                title,
-                content,
-                img,
-                hit,
-                like,
-                createdAt
-            },
+            data,
         });
     }),
 
@@ -85,33 +78,22 @@ module.exports = {
           throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
       // 전달받은 user Id를 가진 nft를 찾아옴
-      const nftData = await nft.findOne({
+      const data = await nft.findAll({
           where: {userId: req.params.userId},
       });
       
       // 해당 user Id를 가진 nft 없으면 조회할 데이터가 없음을 응답
-      if (!nftData) {
+      if (!data || data.length === 0) {
           //404 not found
           throw new CustomError(`조회할 NFT 정보가 없습니다.`, StatusCodes.NOT_FOUND);
       }
 
-      const {id, userId, tokenId, tokenName, desc, tokenURI, img, createdAt,
-             price, prevUserId} = postData;
+      //const {id, userId, tokenId, tokenName, desc, tokenURI, img, createdAt,
+      //       price, prevUserId} = data;
       
       res.status(200).json({
           status: "successful operation",
-          data: {
-              id,
-              userId,
-              tokenId,
-              tokenName,
-              desc,
-              tokenURI,
-              img,
-              createdAt,
-              price,
-              prevUserId
-          },
+          data,
       });
   }),
 
