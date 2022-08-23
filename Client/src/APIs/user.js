@@ -2,34 +2,46 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
-export const login = async (username, password) => {
-    const { data } = await Axios.post(`${API_URL}/login`, {
+//POST /auth/signup 회원가입
+//PRAM username, password, address, tokenAmount, ethAmount, mnemonic, privateKey
+export const join = (username, password) => {
+    return axios.post(`${API_URL}/auth/signup`, {
         username,
         password,
     });
+};
 
-    localStorage.setItem('user', data);
+//POST /auth/login 로그인
+export const login = async (username, password) => {
+    const { data } = await Axios.post(`${API_URL}/auth/login`, {
+        username,
+        password,
+    });
+    
+    //data { token, username }
+    localStorage.setItem('user', data.token);
     return data;
 };
 
+//GET /auth/logout 로그아웃
 export const logout = () => {
-    localStorage.removeItem("user");
+    //토큰 삭제하면 될듯. 호출한 곳에서 로그아웃&페이지 이동처리
+    localStorage.removeItem("user");    
 };
 
-export const join = (username, password) => {
-    return Axios.post(`${API_URL}/join`, {
-        username,
-        password,
-    });
+//GET /auth/{userID} 회원정보 조회
+export const myInfo = async (userID) => {
+    return await Axios.get(`${API_URL}/auth/${userID}`);    
 };
 
-export const getCurrentUser = () => {
-    return JSON.parse(localStorage.getItem("user"));
-};
+//POST /auth/{addr} 무료로 이더 받기(faucet)
+export const faucet = async (addr) => {
+    return await Axios.post(`${API_URL}/auth/${addr}`);
+}
 
 export const Axios = () => {
-    //headers 인증정보 설정
-    const accessToken = getCurrentUser().accessToken;
+    //headers 설정
+    const accessToken = localStorage.getItem("user");
     axios.create({
         headers: { "access-token": accessToken },
     });

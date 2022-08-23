@@ -1,13 +1,12 @@
-import React from 'react';
-import POSTList from '../../components/POST/List';
+import React from "react"
+import  POSTList  from '../../components/POST/List';
 
-const main = () => {
+export function Main() {
     return (
-    <div>
-        커뮤니티 글 목록
+        <>
         <POSTList />
-    </div>
-    )
-};
+        </>
+    );
+}
 
-export default main;
+export default Main;
