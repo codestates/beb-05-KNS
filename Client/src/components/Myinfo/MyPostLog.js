@@ -31,10 +31,8 @@ const data = [
 
 const MyPostLog = () => (
   <Table dataSource={data}>
-    <ColumnGroup title="Name">
-      <Column title="Name" dataIndex="Name" key="Date" />
-      <Column title="Title" dataIndex="Title" key="Title" />
-    </ColumnGroup>
+    <Column title="Name" dataIndex="Name" key="Date" />
+    <Column title="Title" dataIndex="Title" key="Title" />
     <Column title="Desc" dataIndex="Desc" key="Desc" />
     <Column title="Date" dataIndex="Date" key="Date" />
     <Column
