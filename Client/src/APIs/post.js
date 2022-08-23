@@ -1,4 +1,4 @@
-import { Axios } from './user';
+import { Axios } from './auth';
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
