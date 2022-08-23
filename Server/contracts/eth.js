@@ -19,9 +19,14 @@ module.exports = {
           if (err) {
             console.log("transaction 실패 : ", err);
           } else {
-            const balance = await web3.eth.getBalance(address);
+            const balance = await web3.eth.getBalance(address); // 이더 잔액을 가져옴
 
-            const user = await user.updateOne({ id: userId }, { ethAmount: parseFloat(web3.utils.fromWei(balance, "ether")) });
+            // 사용자 정보에 이더 잔액 업데이트
+            await user.update(
+              { ethAmount: parseFloat(web3.utils.fromWei(balance, "ether")) },
+              { where: {id: userId} }
+            );
+
             return user;
           }
         });

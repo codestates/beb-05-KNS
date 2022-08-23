@@ -310,5 +310,37 @@ module.exports = {
       res.sendStatus(StatusCodes.NO_CONTENT); //204 
     }),
 
+    // Comment ID를 받아서 댓글 정보 응답
+    getCommentById: asyncWrapper(async (req, res) => {
+        const { commentId } = req.params;
+        console.log(commentId);
+        if (commentId === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
+        }
+        //전달받은 id를 가진 comment를 찾아옴
+        const commentData = await comment.findOne({
+            where: {id: commentId},
+        });
+
+        //해당 id를 가진 comment 없으면 
+        if (!commentData) {
+            //404 not found
+            throw new CustomError(`댓글이 없습니다.`, StatusCodes.NOT_FOUND);
+        }
+        const {id, postId, userId, userName, content, createdAt} = commentData;
+       
+        res.status(200).json({
+            status: "successful operation",
+            data: {
+                id,
+                postId,
+                userId,
+                userName,
+                content,
+                createdAt   
+            },
+        });
+    }),
+
 
 }

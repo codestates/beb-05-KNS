@@ -35,8 +35,16 @@ module.exports = {
                 .call()
                 .then(async (balance) => {
                 console.log(toUserId + " Token Balance: " + balance);
-                await user.update({ id: toUserId }, { tokenAmount: balance });
-                await user.update({ id: userId }, { $inc: { tokenAmount: -value } });
+
+                // 토큰 받은 사용자 토큰 잔액 업데이트
+                await user.update(
+                  { tokenAmount: balance },
+                  { where: {id: toUserId} }
+                );
+
+                // 토큰 전송 사용자 토큰 잔액 차감
+                await user.increment({tokenAmount: -value}, {where: {id: userId}}) 
+
                 return true;
                 });
             } else {
@@ -76,7 +84,13 @@ module.exports = {
               .call()
               .then((balance) => {
                 console.log(address + " Token Balance: " + balance);
-                const user = user.update({ id: userId }, { tokenAmount: balance });
+                
+                // 토큰 받은 사용자 토큰 잔액 업데이트
+                user.update(
+                  { tokenAmount: balance },
+                  { where: {id: userId} }
+                );
+                
                 return user;
                 
               });
