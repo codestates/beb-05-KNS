@@ -109,7 +109,7 @@ const Nav = () => {
 
     <NavContainer>
         <StyledButton>        
-            <Link to="/page">
+            <Link to="/">
                 <img src={logo} alt='logo' style={{width:'200px', height:'80px'}} />
             </Link>
         </StyledButton>      
@@ -117,13 +117,9 @@ const Nav = () => {
         {/* 잠시보류 <NavInput type="text" placeholder="검색" /> */}
 
             {/* 전체글 보기, 글쓰기, 글수정, 글삭제, 코멘트 달기&수정&삭제  */}
-            <Link to="/POSTList">글목록 </Link>
+            <Link to="/POSTList">전체글보기 </Link>
             <Link to="/POSTWirte">글쓰기 </Link>
             <Link to="/POSTModified">글수정 </Link>
-            <Link to="/POSTDelete">글삭제 </Link>
-            <Link to="/CommentWrite">댓글쓰기 </Link>
-            <Link to="/CommentModified">댓글수정</Link>
-            <Link to="/CommentDelete">댓글삭제</Link>
             <StyledButton>
                 { isLogin?
                     <Link to="/" onClick={()=>{}}>로그아웃</Link>
