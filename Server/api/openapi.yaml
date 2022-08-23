@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: This is KNS Project API service.
-  version: 1.0.0
+  version: 1.0.2
   title: KNS - Incentive Community Project
   contact:
     email: rlawkdgks11@gmail.com
@@ -77,13 +77,14 @@ paths:
       responses:
         '200':
           description: 로그아웃 되었습니다.
+
   /user/{userId}:
     get:
       tags:
         - user
-      summary: 마이페이지 및 유저의 상세 정보
+      summary: User ID를 받아 마이페이지에서 유저의 상세 정보 응답
       description: |
-        userId로 user 테이블 정보를 가져온다.
+        유저의 상세 정보 가져오기
       operationId: getUserById
       parameters:
         - name: userId
@@ -103,19 +104,73 @@ paths:
           description: 올바르지 않은 파라미터 값입니다.
         '404':
           description: 유저 정보가 존재하지 않습니다.
-          
-  /user/{address}:
-    post:
+        
+  /user/{userId}/post:
+    get:
       tags:
         - user
-      summary: 무료로 이더 받기(faucet)
-      description: NFT 구매, 전송 시 가스비가 들기때문에 이더 받기 추가
-      operationId: getEthFaucet
+      summary: User ID를 받아 마이페이지에서 유저의 게시글 정보 응답
+      description: |
+        유저의 게시글 정보 가져오기
+      operationId: getPostByUserId
       parameters:
-        - name: address
+        - name: userId
           in: path
           required: true
-          description: 지갑 주소
+          description: 사용자 아이디
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostApiResponse'
+        '400':
+          description: 올바르지 않은 파라미터 값입니다.
+        '404':
+          description: 조회할 게시글 정보가 없습니다.
+
+  /user/{userId}/nft:
+    get:
+      tags:
+        - user
+      summary: User ID를 받아 마이페이지에서 유저의 NFT 정보 응답
+      description: |
+        유저의 NFT 정보 가져오기
+      operationId: getNFTByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: 사용자 아이디
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTApiResponse'
+        '400':
+          description: 올바르지 않은 파라미터 값입니다.
+        '409':
+          description: 조회할 게시글 정보가 없습니다.
+
+  /user/{userId}/faucet:
+    put:
+      tags:
+        - user
+      summary: 무료로 이더 0.1 이더 받기(faucet)
+      description: NFT 구매, 전송 시 가스비가 들기 때문에 이더 받기 추가
+      operationId: getEthFaucet
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: 사용자 아이디
           schema:
             type: string
       responses:
@@ -125,6 +180,7 @@ paths:
           description: 올바르지 않은 파라미터 값입니다.
         '404':
           description: 유저 정보가 존재하지 않습니다.
+
   /post:
     post:
       tags:
@@ -146,7 +202,7 @@ paths:
           description: 올바르지 않은 파라미터 값입니다.
         '401':
           description: 인가되지 않은 사용자입니다.
-    
+  
     get:
       tags:
         - post
@@ -245,34 +301,7 @@ paths:
           description: 올바르지 않은 파라미터 값입니다.
         '404':
           description: 글번호 몇 번이 존재하지 않습니다.
-         
-  /post/{userId}:
-    get:
-      tags:
-        - post
-      summary: User ID를 받아서 마이페이지에서 유저의 게시글 정보 응답
-      description: |
-        유저의 게시글 정보 가져오기
-      operationId: getPostByUserId
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: 사용자 아이디
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostApiResponse'
-        '400':
-          description: 올바르지 않은 파라미터 값입니다.
-        '404':
-          description: 글번호 몇 번이 존재하지 않습니다.
-          
+                
   /post/like/{postId}:
     put:
       tags:
@@ -414,34 +443,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTApiResponse'
-                
-  /nft/{userId}:
-    get:
-      tags:
-        - nft
-      summary: 사용자 아이디로 NFT 정보 가져오기
-      description: |
-        사용자 아이디로 NFT 정보 조회
-      operationId: getNFTByUserId
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: 사용자 아이디
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NFTApiResponse'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: NFT not found
-          
+                        
   /nft/{nftId}:
     get:
       tags:
@@ -580,7 +582,7 @@ paths:
           description: 토큰 전송 대상 User ID
           schema:
             type: string
-        - name: tokenAmount
+        - name: toTokenAmount
           in: query
           description: 전송할 토큰 수량
           schema:
@@ -590,9 +592,11 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Invalid Address supplied
+          description: 올바르지 않은 파라미터 값입니다.
         '404':
-          description: Token not found
+          description: 토큰 전송할 사용자 정보가 없습니다.
+        '409':
+          description: 보유 토큰보다 전송할 토큰이 더 많습니다.
 components:
   schemas:
     User:
@@ -601,7 +605,7 @@ components:
         id:
           type: integer
           format: int64
-        username:
+        userName:
           type: string
         createdAt:
           type: string
@@ -622,13 +626,14 @@ components:
           type: string
       required:
         - id
-        - username
+        - userName
         - address
         - tokenAmount
         - ethAmount
         - mnemonicWord
         - privateKey
       example: null
+    
     UserRegistration:
       type: object
       title: User registration details
@@ -706,7 +711,22 @@ components:
           example: '2021-01-30T08:30:20.000Z'
       required:
         - id
-      example: null
+      example: {
+                  "status": "successful operation",
+                  "data": {
+                      "id": 3,
+                      "userId": 1,
+                      "userName": "dhkim",
+                      "title": "kdh",
+                      "content": "12345",
+                      "img": "",
+                      "hit": 0,
+                      "like": 0,
+                      "createdAt": "2022-08-22T09:57:58.000Z",
+                      "postComments": []
+                  }
+              }
+
     PostRegistration:
       type: object
       title: Post registration details
