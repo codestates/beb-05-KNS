@@ -49,7 +49,10 @@ function App() {
                   {/* 전체글 보기, 글쓰기, 글수정, 글삭제, 코멘트 달기&수정&삭제  */}
                   <Route path="/POST" element={<POST />} />
                   <Route path="/POSTList" element={<POSTList />} />
-                  <Route path="/POSTWirte" element={<POSTWirte />} />
+                  <Route path="/POSTWirte" element={<POSTWirte 
+                      defaultContent="**<br />hello<br /> world<br />**<br />"
+                      actionBarClass="my-custom-class"
+                    />} />
                   <Route path="/POSTModified" element={<POSTModified />} />
                 </Routes>     
             </MainContainer>
