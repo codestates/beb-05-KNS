@@ -1,4 +1,5 @@
-const {user} = require('../models');
+const { user } = require('../models');
+const erc20 = require("../contracts/erc20");
 
 const {isAuthorized} = require('./webToken')
 const {asyncWrapper} = require("../errors/async");
@@ -8,8 +9,8 @@ const StatusCodes = require("http-status-codes");
 module.exports = {
 
     //User ID를 받아서 토큰 수량 응답
-    geTokenByUserId: asyncWrapper(async (req, res) => {
-      const userId = req.params.id;
+    getTokenByUserId: asyncWrapper(async (req, res) => {
+      const userId = req.params.userId;
         if (userId === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
@@ -37,10 +38,10 @@ module.exports = {
 
     //ERC20 토큰 전송
     transferToken : asyncWrapper(async (req, res) => {
-      const userId = req.params.id;
-      const {toUserId, sendTokenAmount} = req.body;
+      const userId = req.params.userId;
+      const {toUserId, toTokenAmount} = req.body;
 
-      if (toUserId === undefined || sendTokenAmount === undefined) {
+      if (toUserId === undefined || toTokenAmount === undefined) {
           throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
 
@@ -58,23 +59,16 @@ module.exports = {
         where: {id: userId},
       });
 
-      const {fromTokenAmount} = fromUserData;
+      const {tokenAmount} = fromUserData;
 
       // 보유 토큰보다 더 많이 전송시 메시지
-      if(fromTokenAmount < sendTokenAmount) {
-          throw new CustomError(`보유 토큰보다 전송할 토큰이 더 많습니다.`, StatusCodes.NOT_FOUND);
+      if(tokenAmount < toTokenAmount) {
+          throw new CustomError(`보유 토큰보다 전송할 토큰이 더 많습니다.`, StatusCodes.CONFLICT);
       }
 
-      // 토큰 전송할 유저의 토큰 차감
-      await fromUserData.update({
-        tokenAmount: tokenAmount - sendTokenAmount
-      });
-
-      // 토큰 전송 대상 유저의 토큰 증감
-      await toUserData.update({
-        tokenAmount: tokenAmount + sendTokenAmount
-      });
-      
+      // 토큰 전송
+      //const user = erc20.sendToken(userId, toUserId, toTokenAmount);
+       
       res.status(StatusCodes.OK).json({status: "successful operation"});
 
   }),
