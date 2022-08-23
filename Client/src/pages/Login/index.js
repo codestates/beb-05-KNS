@@ -6,6 +6,7 @@ import { UserOutlined, LockOutlined, GoogleOutlined, AppleFilled} from "@ant-des
 const { TabPane } = Tabs;
 
 const LogIn = () => {
+    const login = () => {};
     return (
     <div style={{ width: "100%"}}>
         <Row style={{ backgroundColor: "#f8faff" }}>
