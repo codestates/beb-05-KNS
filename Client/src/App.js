@@ -14,8 +14,6 @@ import POST         from './components/POST';
 import POSTList         from './components/POST/List';
 import POSTWirte        from './components/POST/Wirte';
 import POSTModified     from './components/POST/Modified';
-import POSTDelete       from './components/POST/Delete';
-import Comment    from './components/POST/Comment/';
 
 // page components
 import Login from './pages/Login';
