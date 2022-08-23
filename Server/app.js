@@ -1,8 +1,12 @@
 const models = require("./models/index.js");
 const express = require("express");
 
+const authRoutes = require('./routes/authRoute');
 const userRoutes = require('./routes/userRoute');
 const postRoutes = require('./routes/postRoute');
+const tokenRoutes = require('./routes/tokenRoute');
+const nftRoutes = require('./routes/nftRoute');
+
 const yaml = require("yamljs");
 const swaggerUI = require("swagger-ui-express");
 
@@ -11,30 +15,33 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 //const fs = require("fs");
 //const https = require("https");
-//const errorHandler = require('./errors/error-handler')
+const errorHandler = require('./errors/error-handler')
 
 const app = express();
-const PORT = 4040;
+const PORT = 8080;
 
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ['https://localhost:4000'],
+        origin: ['https://localhost:8080'],
         credentials: true,
         methods: ['GET', 'POST', 'OPTIONS']
     })
 );
 
-app.use('/user', userRoutes);
-app.use('/post', postRoutes);
+app.use('/', authRoutes);
+app.use('/', userRoutes);
+app.use('/', postRoutes);
+app.use('/', tokenRoutes);
+app.use('/', nftRoutes);
 
 const openAPIDocument = yaml.load('./api/openapi.yaml');
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openAPIDocument));
 
 ///무조건 루트 밑에
-//app.use(errorHandler)
+app.use(errorHandler);
 
 models.sequelize.sync().then( () => {
   app.listen(PORT, async () => {
