@@ -25,9 +25,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ['https://localhost:8080'],
+        origin: "*",
         credentials: true,
-        methods: ['GET', 'POST', 'OPTIONS']
+        methods: ['GET', 'POST', 'PUT','DELETE', 'OPTIONS']
     })
 );
 
