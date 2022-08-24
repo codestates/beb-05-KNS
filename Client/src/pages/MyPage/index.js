@@ -6,6 +6,9 @@ import  MyPostLog  from '../../components/Myinfo/MyPostLog';
 import  TokenExchage  from '../../components/Myinfo/TokenExchage';
 import  Myinfo  from '../../components/Myinfo';
 import  TokenMint  from '../../components/Contract/NFTMint';
+import { myInfo } from '../../APIs/auth';
+import { getMyPostList } from '../../APIs/post';
+import { getTokenbal, sendToken, buyNFT, getNFTList, getMyNftList  } from '../../APIs/contract';
 
 const { TabPane } = Tabs;
 const myPage = () => {
@@ -18,7 +21,7 @@ const myPage = () => {
         }}>
         <div>
             <Tabs
-            defaultActiveKey="1"
+            defaultActiveKey="0"
             tabPosition={'left'}
             >
                 <TabPane tab={`내정보`} key='0'>

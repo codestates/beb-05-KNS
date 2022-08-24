@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -39,10 +39,16 @@ export const faucet = async (addr) => {
     return await Axios.post(`${API_URL}/auth/${addr}`);
 }
 
-export const Axios = () => {
-    //headers 설정
-    const accessToken = localStorage.getItem("user");
-    axios.create({
-        headers: { "access-token": accessToken },
-    });
+export const authHeader = () => {
+    const user = localStorage.getItem("user");
+
+    if (user && user.accessToken) {
+        return { "access-token": user.accessToken };
+    } else {
+        return {};
+    }
 };
+
+export const Axios = axios.create({
+    headers: authHeader(),
+});
