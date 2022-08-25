@@ -73,7 +73,7 @@ export const getPostDetail = async (postId) => {
 };
 //GET /post/${userId} 내 게시글 조회
 export const getMyPostList = async (userId) => {
-    return await Axios.get(`${API_URL}/post/${userId}`);
+    return await Axios.get(`${API_URL}/user/${userId}/post`);
 };
 
 

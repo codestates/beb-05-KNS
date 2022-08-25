@@ -45,7 +45,7 @@ app.use(errorHandler);
 
 models.sequelize.sync().then( () => {
   app.listen(PORT, async () => {
-    console.log("DB연결 성공 및 port 구동중");
+    console.log(`DB연결 성공 및 ${PORT} 구동중`);
   });
 
     /* if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')) {

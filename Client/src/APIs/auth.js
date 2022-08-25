@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_SERVER_URL;
 //POST /auth/signup 회원가입
 //PRAM username, password, address, tokenAmount, ethAmount, mnemonic, privateKey
 export const join = (username, password) => {
-    return axios.post(`${API_URL}/auth/signup`, {
+    return axios.post(`${API_URL}/signup`, {
         username,
         password,
     });
@@ -13,7 +13,7 @@ export const join = (username, password) => {
 
 //POST /auth/login 로그인
 export const login = async (username, password) => {
-    const { data } = await Axios.post(`${API_URL}/auth/login`, {
+    const { data } = await Axios.post(`${API_URL}/login`, {
         username,
         password,
     });
@@ -31,12 +31,12 @@ export const logout = () => {
 
 //GET /auth/{userID} 회원정보 조회
 export const myInfo = async (userID) => {
-    return await Axios.get(`${API_URL}/auth/${userID}`);    
+    return await Axios.get(`${API_URL}/user/${userID}`);    
 };
 
 //POST /auth/{addr} 무료로 이더 받기(faucet)
 export const faucet = async (addr) => {
-    return await Axios.post(`${API_URL}/auth/${addr}`);
+    return await Axios.post(`${API_URL}/user/${addr}`);
 }
 
 export const authHeader = () => {
