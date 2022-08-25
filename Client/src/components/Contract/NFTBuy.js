@@ -1,28 +1,41 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, message } from 'antd';
 import React, { useState } from 'react';
+import { buyNFT } from '../../APIs/contract';
 
-const NFTBuy = () => {
+const NFTBuy = ({image, tokenId}) => {
     const [visible, setVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [modalText, setModalText] = useState('Content of the modal');
+    const [modalText, setModalText] = useState('현재 NFT를 구매하시겠습니까?');
   
     const showModal = () => {
       setVisible(true);
     };
+
+    const Reset = () => {
+      setVisible(false);
+      setConfirmLoading(false);
+      setModalText('현재 NFT를 구매하시겠습니까?');
+    }
   
     const handleOk = () => {
-      setModalText('The modal will be closed after two seconds');
+      setModalText('구매 진행중... 잠시 기다려주세요.');
       setConfirmLoading(true);
-      setTimeout(() => {
-        setVisible(false);
-        setConfirmLoading(false);
-      }, 2000);
+      sendMsgBuy();
+      setTimeout(() => { 
+        Reset();
+        message.success('구매에 성공했습니다.');
+      }, 3000);
     };
   
     const handleCancel = () => {
-      console.log('Clicked cancel button');
+      message.error('거래가 취소되었습니다.');
       setVisible(false);
     };
+
+    const sendMsgBuy = async () => {
+      const res = await buyNFT(tokenId);
+      console.log("tokenId",tokenId,res);
+    }
 
     return (
     <>
@@ -31,13 +44,13 @@ const NFTBuy = () => {
         NFTBuy
       </Button>
       <Modal
-        title="Title"
+        title="NFT구매창"
         visible={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <p>{modalText}</p>
+        <p>{confirmLoading?null:<img alt='NFT' src={image} />}{modalText}</p>
       </Modal>
     </>
     )

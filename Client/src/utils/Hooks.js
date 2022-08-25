@@ -24,3 +24,8 @@ export const useMyNftList = create((set) => ({
   myNftList: null,
   setMyNftList: (myNftList) => set({ myNftList }),
 }));
+
+export const useMyPostList = create((set) => ({
+  myPostList: null,
+  setMyPostList : (postList) => set({ postList }),
+}));

@@ -45,7 +45,7 @@ export async function pinataUploadJSON(data){
     }
   })
   .then(function (response) {
-      return response.data.IpfsHash;
+      return pinata_gwUrl+response.data.IpfsHash;
   })
   .catch(function (error) {
     console.log(error);
