@@ -1,9 +1,8 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import "antd/dist/antd.css";
 import { Tabs,  Row,  Col,  Input,  Space,  Button} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { useUserInfo } from "../../utils/Hooks";
 import { login } from "../../APIs/auth";
 
@@ -26,8 +25,19 @@ const LogIn = () => {
 	};
 
     const isLogin = async () => {
-            const {accessToken, userName} = await login(user.userName, user.password);
-            setUserInfo({accessToken, userName})
+            await login(user.userName, user.password)
+            .then((res) => {
+                const loginData = res.data;
+    
+                console.log(loginData.accessToken);
+                console.log(loginData.userName);
+    
+                localStorage.setItem('token', loginData.accessToken);
+                //setUserInfo({accessToken, userName})
+                navigate('/');
+            });
+            // setUserInfo({accessToken, userName});
+            // navigate('/');
             // await Axios.post(`http://localhost:8080/login`, user)
                 // .then(() => {
                 //     console.log(data);
