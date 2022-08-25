@@ -1,23 +1,21 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import "antd/dist/antd.css";
 import { Tabs,  Row,  Col,  Input,  Space,  Button} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { useUserInfo } from "../../utils/Hooks";
-import { login } from "../../APIs/auth";
 
 const { TabPane } = Tabs;
 
-const LogIn = () => {
+const Signup = () => {
     const navigate = useNavigate();
-    const [userInfo, setUserInfo] = useUserInfo((state) => [state.userInfo, state.setUserInfo]);
     const [user, setUser] = useState({
         userName:'',
         password:'',
+        confirmPassword:''
     });
 
-    const handleLogin = (e) => {
+    const handleSignup = (e) => {
 		const { name, value } = e.target;
 		setUser({
 			...user,
@@ -25,21 +23,26 @@ const LogIn = () => {
 		});
 	};
 
-    const isLogin = async () => {
-            const {accessToken, userName} = await login(user.userName, user.password);
-            setUserInfo({accessToken, userName})
-            // await Axios.post(`http://localhost:8080/login`, user)
-                // .then(() => {
-                //     console.log(data);
-                //     alert('로그인이 되었습니다.');
-                //     navigate(`/`);
-                // })
+    const isSignup = async () => {
+        const { userName, password, confirmPassword } = user;
+        if (userName && password && password === confirmPassword) {
+            await axios
+                .post(`http://localhost:8080/signup`, user)
+                .then((res) => {
+                    console.log(res);
+                    alert('회원가입이 되었습니다.')
+                    navigate(`/login`);
+                })
                 // .catch((err) => {
-                //     alert(err);
+                //     if (err) {
+                //         alert(err.response.data.message);
+                //     }
                 // })
-    }
-    
-    
+        } else {
+            alert('비밀번호가 일치하지 않습니다.')
+        }
+    };
+
     return (
     <div style={{ width: "100%"}}>
         <Row style={{ backgroundColor: "#f8faff" }}>
@@ -48,40 +51,47 @@ const LogIn = () => {
                 <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "10%" }}>
                     <Space direction="vertical" align="center">
-                    <h1 className="signinheader">로그인</h1>
+                    <h1 className="signinheader">회원가입</h1>
                     <Tabs defaultActiveKey="1" centered style={{ width: "100%" }}>
-                        <TabPane key="1" style={{
+                        <TabPane key="2" style={{
                             backgroundColor: "#fff",
                             padding: 25,
                             margin: 0,
                             borderRadius: 8,
                             borderColor: "#f0f0f0",
                             borderStyle: "solid",
-                            borderWidth: 1 }}>
+                            borderWidth: 1
+                            }}>
                             <Space direction="vertical">
                                 <Input 
                                     type="userName" 
                                     name="userName"
                                     value={user.userName}
-                                    placeholder="계정" 
+                                    placeholder="계정"
                                     size="large" 
                                     prefix={<UserOutlined />}
-                                    onChange={handleLogin}
+                                    onChange={handleSignup}
                                     />
                                 <Input.Password 
-                                    type="password" 
+                                    type="passwoed"
                                     name="password"
                                     value={user.password}
                                     placeholder="암호"
-                                    prefix={<LockOutlined />}
-                                    size="large" 
-                                    onChange={handleLogin}
+                                    prefix={<LockOutlined />} 
+                                    size="large"
+                                    onChange={handleSignup}
                                     />
-                                <Button type="primary" size="large" block onClick={isLogin}>
-                                    로그인
-                                </Button>
-                                <Button type="primary" size="large" block onClick={() => navigate('/signup')}>
-                                    회원가입
+                                <Input.Password 
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={user.confirmPassword}
+                                    placeholder="암호확인"
+                                    prefix={<LockOutlined />} 
+                                    size="large"
+                                    onChange={handleSignup}
+                                    />
+                                <Button type="primary" size="large" block onClick={isSignup}>
+                                    가입하기
                                 </Button>
                             </Space>
                         </TabPane>
@@ -96,4 +106,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn;
+export default Signup;
