@@ -1,5 +1,5 @@
 import React from "react"
-import  POSTList  from '../../components/POST/List';
+import  POSTList  from '../Post/PostList';
 
 export function Main() {
     return (

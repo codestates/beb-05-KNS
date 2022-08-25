@@ -5,12 +5,12 @@ const API_URL = process.env.REACT_APP_SERVER_URL;
 //POST /post 게시글 작성
 //PRAM userId, title, content, image , hashtag?
 export const writePost = async (data) => {
+    console.log(data);
     return await Axios.post(`${API_URL}/post`, {
-        data,
-        // userId*	integer($int64)
-        // title*	string
-        // content*	string
-        // img	string
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        img: data.img,
     });
 };
 
@@ -23,7 +23,10 @@ export const getPostList = async () => {
 //PRAM title, content, img
 export const modifiedPost = async (data,postId) => {
     return await Axios.put(`${API_URL}/post/${postId}`, {
-        data,
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        img: data.img,
     });
 };
 
@@ -33,22 +36,23 @@ export const deletePost = async (postId) => {
 };
 
 //PUT /post/like/{postId} 게시글 좋아요 업데이트
-export const addLike = async (postId) => {
-    return await Axios.post(`${API_URL}/post/like/${postId}`);
+export const likePost = async (postId) => {
+    return await Axios.put(`${API_URL}/post/like/${postId}`);
 };
 
 //POST /post/{postId}/comment 게시글 댓글 작성
 //PRAM postId, userId, userName, comment
 export const writeReply = async (data,postId) => {
     return await Axios.post(`${API_URL}/post/${postId}/comment`, {
-        data,
+        userId: data.userId,
+        content: data.content,
     });
 };
 
 //PUT /post/comment/{commentId} 게시글 댓글 수정
 export const modifiedReply = async (data,commentId) => {
     return await Axios.put(`${API_URL}/post/comment/${commentId}`, {
-        data,
+        content: data.content,
     });
 };  
 

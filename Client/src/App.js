@@ -10,15 +10,15 @@ import Footer from './components/Footer';
 import Navi from './components/navigator';
 
 //작업용
-import POST         from './components/POST';
-import POSTList         from './components/POST/List';
-import POSTWirte        from './components/POST/Wirte';
-import POSTModified     from './components/POST/Modified';
+import PostList     from './pages/Post/PostList';
+import PostWrite    from './pages/Post/PostWrite';
+import PostView     from './pages/Post/PostView';
+import PostEdit     from './pages/Post/PostEdit';
 
 // page components
 import Login from './pages/Login';
 import Main from './pages/Main';
-import Page from './pages/Post';
+
 import MyPage from './pages/MyPage';
 import NotFound from './pages/NotFound';
 
@@ -43,17 +43,15 @@ function App() {
                 <Routes>
                   <Route exact path="/" element={<Main />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/page" element={<Page />} />
                   <Route path="/mypage" element={<MyPage />} />
                   <Route path="/notfound/" element={<NotFound />} />
-                  {/* 전체글 보기, 글쓰기, 글수정, 글삭제, 코멘트 달기&수정&삭제  */}
-                  <Route path="/POST" element={<POST />} />
-                  <Route path="/POSTList" element={<POSTList />} />
-                  <Route path="/POSTWirte" element={<POSTWirte 
-                      defaultContent="**<br />hello<br /> world<br />**<br />"
-                      actionBarClass="my-custom-class"
-                    />} />
-                  <Route path="/POSTModified" element={<POSTModified />} />
+
+                  {/* 전체글 보기, 글쓰기, 상세 보기, 글수정  */}
+                  <Route path="/PostList" element={<PostList />} />
+                  <Route path="/PostWrite" element={<PostWrite />} />           
+                  <Route path="/PostView/:id" element={<PostView />} />             
+                  <Route path="/PostEdit/:id" element={<PostEdit />} />
+                 
                 </Routes>     
             </MainContainer>
             <Footer />  

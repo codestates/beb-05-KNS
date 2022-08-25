@@ -11,10 +11,10 @@ module.exports = {
     writePost: asyncWrapper(async (req, res) => {
         
         if (req.body.title === undefined || req.body.content === undefined) {
-            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
+            throw new CustomError("제목 또는 내용을 입력해주세요.",StatusCodes.BAD_REQUEST);
         }
 
-        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        /* const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
         }
@@ -26,12 +26,12 @@ module.exports = {
         
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
-        }
+        } */
 
-        const {title, content, img} = req.body;
+        const {userId, title, content, img} = req.body;
         // req.body에 필요한 값들이 없으면 Bad Request 에러 응답
         if (!title || !content) {
-            throw new CustomError("올바르지 않은 파라미터 값입니다.", StatusCodes.BAD_REQUEST);
+            throw new CustomError("제목 또는 내용을 입력해주세요.", StatusCodes.BAD_REQUEST);
         }
         const newPost = new post({
             userId,
@@ -52,12 +52,14 @@ module.exports = {
 
     //게시글 수정
     updatePost : asyncWrapper(async (req, res) => {      
+    
         const { postId } = req.params;
 
         if (req.body.title === undefined || req.body.content === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
-        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+
+        /* const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
         }
@@ -65,7 +67,8 @@ module.exports = {
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
-        const userId = userInfo.id
+        const userId = userInfo.id */
+
         const postData = await post.findOne({
             where: {id: postId},
         });
@@ -74,14 +77,16 @@ module.exports = {
             //404 not found
             throw new CustomError(`글번호 ${postId} 번이 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
         }
-        console.log(userId);
-        console.log(postData.userId);
+        //console.log(userId);
+        //console.log(postData.userId);
+
+        const {userId, title, content, img } = req.body;
 
         if(postData.userId !== userId){
             //403 사용자가 일치하지 않을 때
             throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
         }
-        const { title, content, img } = req.body;
+        
         await postData.update({
             title: title,
             content: content,
@@ -97,6 +102,7 @@ module.exports = {
       if (postId === undefined) {
         throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
+
       const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
@@ -106,6 +112,7 @@ module.exports = {
           where: {id: decoded.id},
       });
       const userId = userInfo.id
+
       const postData = await post.findOne({
           where: {id: postId},
       });
@@ -114,6 +121,7 @@ module.exports = {
           throw new CustomError(`글번호 ${postId} 번이 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
       }
 
+      //console.log(userId);
       if(postData.userId !== userId){
           //403 사용자가 일치하지 않을 때
           throw new CustomError(`올바른 사용자가 아닙니다.`,StatusCodes.FORBIDDEN);
@@ -154,11 +162,13 @@ module.exports = {
         if (postId === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
+
+        await post.increment({hit: 1}, {where: {id: postId}}) // 게시글 상세 조회하면 조회수 증가
+
         //전달받은 id를 가진 post를 찾아옴
         const postData = await post.findOne({
             where: {id: postId},
-        });
-        await post.increment({hit: 1}, {where: {id: postId}}) // 게시글 상세 조회하면 조회수 증가
+        });       
         //해당 id를 가진 post 없으면 에러 응답
         if (!postData) {
             //404 not found
@@ -200,7 +210,11 @@ module.exports = {
     //전체 게시글 가져오기
     getAllPosts: asyncWrapper(async (req, res) => {
         
-        const writings = await post.findAll();
+        const writings = await post.findAll({
+            order: [
+                ["id", "DESC"],
+              ],
+        });
         // Array에 map을 돌 때 콜백함수가 비동기면 일반적인 방법으로는 구현이 안됨
         // 그래서 Promise.all을 사용함
         const data = await Promise.all(
@@ -237,7 +251,7 @@ module.exports = {
     // 댓글 작성
     writeComment : asyncWrapper(async (req, res) => {
         const { postId } = req.params;
-        const { content } = req.body;
+        const { userId, content } = req.body;
         
         if (postId === undefined || content === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
@@ -247,21 +261,22 @@ module.exports = {
             where: {id: postId},
         });
      
-        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        /* const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
-        }
+        } */
         
         const userInfo = await user.findOne({
-            where: {id: decoded.id},
-        });
+            where: {id: userId},
+        }); 
+
         if (!postData) {
             //404 not found
             throw new CustomError(`글번호 ${postId} 번이 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
         }
         const newComment = new comment({
             postId,
-            userId : decoded.id,
+            userId : userId,
             userName : userInfo.userName,
             content
         });
@@ -339,15 +354,17 @@ module.exports = {
     }),
 
     // Comment ID를 받아서 댓글 정보 응답
-    getCommentById: asyncWrapper(async (req, res) => {
-        const { commentId } = req.params;
-        console.log(commentId);
-        if (commentId === undefined) {
+    getCommentByPostId: asyncWrapper(async (req, res) => {
+        const { postId } = req.params;
+        
+        //console.log(postId);
+        if (postId === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
         //전달받은 id를 가진 comment를 찾아옴
-        const commentData = await comment.findOne({
-            where: {id: commentId},
+        const commentData = await comment.findAll({
+            where: {postId: postId},         
+
         });
 
         //해당 id를 가진 comment 없으면 
@@ -355,18 +372,11 @@ module.exports = {
             //404 not found
             throw new CustomError(`댓글이 없습니다.`, StatusCodes.NOT_FOUND);
         }
-        const {id, postId, userId, userName, content, createdAt} = commentData;
        
+        
         res.status(200).json({
             status: "successful operation",
-            data: {
-                id,
-                postId,
-                userId,
-                userName,
-                content,
-                createdAt   
-            },
+            commentData
         });
     }),
 
