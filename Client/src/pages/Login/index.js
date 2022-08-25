@@ -25,30 +25,33 @@ const LogIn = () => {
 	};
 
     const isLogin = async () => {
-            await login(user.userName, user.password)
-            .then((res) => {
-                const loginData = res.data;
-    
-                console.log(loginData.accessToken);
-                console.log(loginData.userName);
-    
-                localStorage.setItem('token', loginData.accessToken);
-                //setUserInfo({accessToken, userName})
-                navigate('/');
-            });
-            // setUserInfo({accessToken, userName});
-            // navigate('/');
-            // await Axios.post(`http://localhost:8080/login`, user)
-                // .then(() => {
-                //     console.log(data);
-                //     alert('로그인이 되었습니다.');
-                //     navigate(`/`);
-                // })
-                // .catch((err) => {
-                //     alert(err);
-                // })
+        await login(user.userName, user.password)
+        .then((res) => {
+            const loginData = res.data;
+
+            console.log(loginData.accessToken);
+            
+            localStorage.setItem('token', loginData.accessToken);
+            //setUserInfo({accessToken, userName})
+            navigate('/');
+        })
+        .catch((err) => {
+            if (err) {
+                alert(err.response.data.message);
+            }
+        });           
+        // setUserInfo({accessToken, userName});
+        // navigate('/');
+        // await Axios.post(`http://localhost:8080/login`, user)
+            // .then(() => {
+            //     console.log(data);
+            //     alert('로그인이 되었습니다.');
+            //     navigate(`/`);
+            // })
+            // .catch((err) => {
+            //     alert(err);
+            // })
     }
-    
     
     return (
     <div style={{ width: "100%"}}>

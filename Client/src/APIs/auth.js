@@ -14,14 +14,12 @@ export const join = async (username, password) => {
 };
 
 //POST /auth/login 로그인
-export const login = async (username, password) => {
-    const { data } = await Axios.post(`${API_URL}/login`, {
-        username,
-
+export const login = async (userName, password) => {
+    const data = await Axios.post(`${API_URL}/login`, {
+        userName,
         password,
     });
-    // console.log(data);
-    //data { token, username }
+    // console.log(data);   
     return data;
 };
 
