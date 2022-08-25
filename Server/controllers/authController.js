@@ -103,7 +103,7 @@ module.exports = {
     const userInfo = await user.findOne({
       where: {userName: req.body.userName},
     });
-    console.log(userInfo);
+    console.log(req.body);
     const validPassword = await bcrypt.compare(password, userInfo.password);
     if (!validPassword) {
       throw new CustomError("존재하지 않는 사용자입니다.",StatusCodes.NOT_FOUND);
@@ -116,10 +116,9 @@ module.exports = {
         // sendAccessToken(res, await generateAccessToken(payload));
         // const token = generateAccessToken(payload);
         const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, {expiresIn: '1d',});
-        
-        // console.log(token);
-        res.cookie("jwt",accessToken);
-        res.status(StatusCodes.OK).send({ data: {accessToken: accessToken, userName: userName}, message: "로그인 되었습니다."})   
+        console.log(accessToken);
+        res.cookie(`Bearer  ${accessToken}`);
+        res.status(StatusCodes.OK).json({ accessToken, userName });  
     }
       
     // const { userName, password } = req.body;

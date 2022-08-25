@@ -2,10 +2,12 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
-//POST /auth/signup 회원가입
+//POST /signup 회원가입
 //PRAM username, password, address, tokenAmount, ethAmount, mnemonic, privateKey
-export const join = (username, password) => {
-    return axios.post(`${API_URL}/signup`, {
+
+export const join = async (username, password) => {
+    return await axios.post(`${API_URL}/signup`, {
+
         username,
         password,
     });
@@ -15,15 +17,18 @@ export const join = (username, password) => {
 export const login = async (username, password) => {
     const { data } = await Axios.post(`${API_URL}/login`, {
         username,
+
         password,
     });
-    
+    console.log(data);
     //data { token, username }
-    localStorage.setItem('user', data.token);
+    if (data?.accessToken) {
+        localStorage.setItem('token', data.accessToken);
+    }
     return data;
 };
 
-//GET /auth/logout 로그아웃
+//GET /logout 로그아웃
 export const logout = () => {
     //토큰 삭제하면 될듯. 호출한 곳에서 로그아웃&페이지 이동처리
     localStorage.removeItem("user");    
@@ -44,7 +49,7 @@ export const authHeader = () => {
 
     if (user && user.accessToken) {
         return { "access-token": user.accessToken };
-    } else {
+    } else {    
         return {};
     }
 };
