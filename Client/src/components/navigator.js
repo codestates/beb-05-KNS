@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import logo from "../assets/logo.png";
 import { Link } from 'react-router-dom';
-import { WalletOutlined,UserOutlined } from "@ant-design/icons";
+import { WalletOutlined,UserOutlined,ImportOutlined } from "@ant-design/icons";
 
 const NavContainer = styled.div`
     display: grid;
@@ -102,8 +102,11 @@ const StyledButton = styled.button`
 `;
 
 const Nav = () => {
-
-    const isLogin = false;
+    const [isLogin,setLogin] = useState(false);
+    const loginChange = (e) => {
+        setLogin(e.target.value);
+    }
+    // const isLogin = false;
 
     return (
 
@@ -121,9 +124,8 @@ const Nav = () => {
             <Link to="/POSTWrite">게시글 등록</Link>
         
             <StyledButton>
-                { isLogin?
-                    <Link to="/" onClick={()=>{}}>로그아웃</Link>
-                    :<Link to="/login" onClick={()=>{}}><UserOutlined /></Link>
+            { isLogin ? <Link to="/" onClick={()=>{loginChange();}}><ImportOutlined /></Link>
+                    :<Link to="/login" onClick={()=>{loginChange();}}><UserOutlined /></Link>
                 }
             </StyledButton>
             <StyledButton>

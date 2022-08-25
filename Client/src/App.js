@@ -18,7 +18,7 @@ import PostEdit     from './pages/Post/PostEdit';
 // page components
 import Login from './pages/Login';
 import Main from './pages/Main';
-
+import Signup from './pages/Signup';
 import MyPage from './pages/MyPage';
 import NotFound from './pages/NotFound';
 
@@ -43,6 +43,7 @@ function App() {
                 <Routes>
                   <Route exact path="/" element={<Main />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/Signup" element={<Signup />} />
                   <Route path="/mypage" element={<MyPage />} />
                   <Route path="/notfound/" element={<NotFound />} />
 
