@@ -117,9 +117,9 @@ const Nav = () => {
         {/* 잠시보류 <NavInput type="text" placeholder="검색" /> */}
 
             {/* 전체글 보기, 글쓰기, 글수정, 글삭제, 코멘트 달기&수정&삭제  */}
-            <Link to="/POSTList">전체글보기 </Link>
-            <Link to="/POSTWirte">글쓰기 </Link>
-            <Link to="/POSTModified">글수정 </Link>
+            <Link to="/POSTList">커뮤니티</Link>
+            <Link to="/POSTWrite">게시글 등록</Link>
+        
             <StyledButton>
                 { isLogin?
                     <Link to="/" onClick={()=>{}}>로그아웃</Link>
