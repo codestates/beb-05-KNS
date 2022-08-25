@@ -20,11 +20,8 @@ export const login = async (username, password) => {
 
         password,
     });
-    console.log(data);
+    // console.log(data);
     //data { token, username }
-    if (data?.accessToken) {
-        localStorage.setItem('token', data.accessToken);
-    }
     return data;
 };
 
