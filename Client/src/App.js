@@ -41,8 +41,8 @@ function App() {
           <Layout>
             <MainContainer>   
                 <Routes>
-                  <Route exact path="/" element={<Main />} />
-                  <Route path="/login" element={<Login />} />
+                  {/* <Route exact path="/" element={<Main />} /> */}
+                  <Route exact path="/" element={<Login />} />
                   <Route path="/Signup" element={<Signup />} />
                   <Route path="/mypage" element={<MyPage />} />
                   <Route path="/notfound/" element={<NotFound />} />
