@@ -1,4 +1,5 @@
 import { Axios } from './auth';
+import {getHeaders} from './token';
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -6,6 +7,8 @@ const API_URL = process.env.REACT_APP_SERVER_URL;
 export const mintNFT = async (data) => {
     return await Axios.post(`${API_URL}/nft`, {
         data
+    },{
+        headers: getHeaders()
     });
 };
 
@@ -26,7 +29,12 @@ export const getNFTInfoDetail = async (nftId) => {
 
 //PUT /nft/{nftId} NFT 정보 구매
 export const buyNFT = async (nftId) => {
-    return await Axios.put(`${API_URL}/nft/${nftId}/buy`);
+    console.log('헤더', getHeaders());
+    return await Axios.put(`${API_URL}/nft/${nftId}/buy`,{},
+        {
+            headers: getHeaders()
+        }
+    );
 };
 //PUT /nft/{nftId} NFT 전달
 export const transferNFT = async (nftId,targetAddr) => {

@@ -1,4 +1,5 @@
 const {nft, post, user, comment} = require('../models');
+const erc721 = require("../contracts/erc721");
 
 const {isAuthorized} = require('./webToken')
 //const {mintToken} = require('./smartContract')
@@ -10,28 +11,25 @@ const StatusCodes = require("http-status-codes");
 module.exports = {
     //NFT 생성
     createNFT: asyncWrapper(async (req, res) => {
-        
-        if (req.body.tokenName === undefined) {
+        const { data: bodydata } = req.body;
+
+        if (bodydata.tokenName === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
-
         const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
-        }
-        
+        }        
         const userInfo = await user.findOne({
             where: {id: decoded.id},
         });
         const userId = userInfo.id
-        if (!decoded) {
+        if (!userId) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
         }
 
-        const {tokenId, tokenName, desc, tx_hash, tokenURI, img}
-               = req.body;
-        
-        const newNFT = new post({
+        const {tokenId, tokenName, desc, tx_hash, tokenURI, img} = bodydata;  
+        const newNFT = new nft({
             userId,
             tokenId,
             tokenName,
@@ -41,16 +39,52 @@ module.exports = {
             img
         });
         try {
-            // db에 저장
-            const createdNFT = await newNFT.save();
-
-            //NFT 민팅
-            //await mintToken(userInfo.address, 5);
-
+            // db에 저장  //NFT 민팅은 여기서 안하고 구매시 한다.
+            const createdNFT = await newNFT.save(); 
             res.status(StatusCodes.CREATED).json({status: "successful created", data: {nftId: createdNFT.id}});
         } catch (err) {
             throw new Error(err);
         }
+    }),
+
+    //NFT 구매
+    buyNFT : asyncWrapper(async (req, res) => {
+        const nftId = req.params.nftId;
+
+        if (nftId === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
+        }
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크    
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }        
+        const userInfo = await user.findOne({
+            where: {id: decoded.id},
+        });
+        const userId = userInfo.id
+        if (!userId) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        }
+
+        const toUserData = await user.findOne({
+            where: {address: userInfo.address}
+        });
+        // 토큰 전송할 NFT 정보를 가져옴
+        const fromNFTData = await nft.findOne({
+            where: {tokenId: nftId}
+        });
+
+        // NFT 구매
+        const newTokenId = await erc721.mintToken( toUserData.userId, fromNFTData.tokenURI);
+        if(newTokenId){            
+            const res = await fromNFTData.update({
+                userId: toUserData.userId,
+                tokenId: newTokenId,
+                isBuy: true,
+            });
+        }
+        res.status(StatusCodes.OK).json({status: "successful operation"});
+
     }),
 
     // NFT ID를 받아서 해당 NFT 상세 정보 응답
@@ -64,7 +98,7 @@ module.exports = {
         const nftData = await nft.findOne({
             where: {id: nftId}
         });
-      
+
         //해당 id를 가진 nft 없으면 에러 응답
         if (!nftData) {
             //404 not found
@@ -76,7 +110,7 @@ module.exports = {
         const {userName} = await user.findOne({
             where: {id: nftData.userId}
         });
-              
+
         res.status(200).json({
             status: "successful operation",
             data: {
@@ -134,11 +168,11 @@ module.exports = {
     transferNFT : asyncWrapper(async (req, res) => {
         const nftId = req.params.nftId;
         const {address} = req.body;
-  
+
         if (nftId === undefined || address === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
-  
+
         const toUserData = await user.findOne({
             where: {address: address}
         });
@@ -147,46 +181,19 @@ module.exports = {
             //404 not found
             throw new CustomError(`NFT 전송할 지갑 정보가 없습니다.`, StatusCodes.NOT_FOUND);
         }
-  
-        // 토큰 전송할 NFT 정보를 가져옴
-        const fromNFTData = await nft.findOne({
-            where: {id: nftId}
-        });
-  
-        const {userId} = fromNFTData;
-  
-        // NFT 전송
-        //const user = erc20.sendToken(userId, toUserData.userId);
-         
-        res.status(StatusCodes.OK).json({status: "successful operation"});
-  
-    }),
 
-    //NFT 구매
-    buyNFT : asyncWrapper(async (req, res) => {
-        const nftId = req.params.nftId;
-        const {address} = req.body;
-  
-        if (nftId === undefined || address === undefined) {
-            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
-        }
-  
-        const toUserData = await user.findOne({
-            where: {address: address}
-        });
-       
         // 토큰 전송할 NFT 정보를 가져옴
         const fromNFTData = await nft.findOne({
             where: {id: nftId}
         });
-  
+
         const {userId} = fromNFTData;
-  
-        // NFT 구매
-        //const user = erc20.sendToken(userId, toUserData.userId);
+
+        // NFT 전송
+        erc721.sendToken(userId, toUserData.userId, nftId);
          
         res.status(StatusCodes.OK).json({status: "successful operation"});
-  
+
     }),
 
 }
