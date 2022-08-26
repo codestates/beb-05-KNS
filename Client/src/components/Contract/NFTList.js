@@ -11,7 +11,7 @@ const NFTList = () => {
     const getNList = async () =>{
         const { data: {data} } = await getNFTList(); //API 호출
         setNftList([...data]);
-        console.log("getMyNftList",data,nftList );
+        console.log("getALLNftList",data,nftList );
         bstate = true;
     }
 

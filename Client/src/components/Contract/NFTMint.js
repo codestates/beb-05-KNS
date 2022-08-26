@@ -122,10 +122,10 @@ const UseMintNftimg = () => {
         console.log('----file url----',upLoadIPFSUrl);
         setMintData("ExLink", upLoadIPFSUrl);
         const metaDataJson = {
-        name: nftData.NFTName,
-        description: nftData.NFTDesc,
-        price: nftData.SellPrice,
-        NFTUrl: upLoadIPFSUrl,
+            name: nftData.NFTName,
+            description: nftData.NFTDesc,
+            price: nftData.SellPrice,
+            NFTUrl: upLoadIPFSUrl,
         };
         console.log(metaDataJson);
         const upLoadIPFSMetaDataUrl = await pinataUploadJSON(metaDataJson);
@@ -137,11 +137,10 @@ const UseMintNftimg = () => {
     
     const minting = async () =>{
         const data = {
-            userId : '1',
-            tokenId : '10', 
+            tokenId : 0, 
             tokenName: nftData.NFTName, 
             desc: nftData.NFTDesc, 
-            tx_hash: "owner", 
+            tx_hash: "", 
             tokenURI: nftData.MetaData, 
             img: nftData.ExLink,
         }

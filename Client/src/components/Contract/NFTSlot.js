@@ -10,8 +10,8 @@ const NFTSlot = ({isBuy, NftList}) => {
       <Card hoverable style={{ width: 240 }} cover={<img alt={NftList?.tokenName} src={NftList?.img} />}>
         <Meta title={NftList?.tokenName} description={NftList?.desc} /><br />
         {isBuy?(
-          <NFTBuy style={{justifyContent: 'right'}} image={NftList?.img} tokenId={NftList?.tokenId}/>):''}
-          <div>TID:{NftList?.tokenId}</div>
+          <NFTBuy style={{justifyContent: 'right'}} image={NftList?.img} tokenId={NftList?.id}/>):''}
+          <div>TID:{NftList?.id}</div>
       </Card>
     )
 };
