@@ -29,7 +29,7 @@ export default function PostWrite( ) {
   await writePost(data)
     .then((res) => {
         console.log(res);
-        navigate(`/`);
+        navigate(`/POSTList`);
     })
     .catch((err) => {
         if (err) {
@@ -103,7 +103,7 @@ export default function PostWrite( ) {
                             content="등록"
                             onClick={registerPost}/> 
                             {/* 내용 등록하고 목록으로 이동 */}
-                        <Link to={`/`}>목록</Link>
+                        <Link to={`/POSTList`}>목록</Link>
                         {/* 해당 게시물 뷰로 이동 */}
                     </div>
         </div>

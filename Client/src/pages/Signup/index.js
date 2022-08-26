@@ -31,7 +31,7 @@ const Signup = () => {
                 .then((res) => {
                     console.log(res);
                     alert('회원가입이 되었습니다.')
-                    navigate(`/login`);
+                    navigate(`/`);
                 })
                 // .catch((err) => {
                 //     if (err) {

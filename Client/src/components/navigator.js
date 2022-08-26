@@ -1,8 +1,10 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import logo from "../assets/logo.png";
 import { Link } from 'react-router-dom';
 import { WalletOutlined,UserOutlined,ImportOutlined } from "@ant-design/icons";
+import { logout } from "../APIs/auth";
+import { useNavigate } from 'react-router-dom';
 
 const NavContainer = styled.div`
     display: grid;
@@ -62,26 +64,26 @@ li {
 }
 `;
 
-const NavInput = styled.input`
-    font-size: 16px;
-    border-radius: 25px;
-    height: 42px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 5px rgb(109 207 246 / 50%);
-    padding-left: 2rem;
-    padding-right: 2.5rem;
-    cursor: auto;
-    border: none;
-    :hover {
-        transition: all 0.2s ease-in-out;
-        background-color: #999999;
-        color: white;
-        ::placeholder {
-            color: white;
-        }
-    }
-`;
+// const NavInput = styled.input`
+//     font-size: 16px;
+//     border-radius: 25px;
+//     height: 42px;
+//     outline: none;
+//     transition: all 0.3s ease-in-out;
+//     box-shadow: 0 0 5px rgb(109 207 246 / 50%);
+//     padding-left: 2rem;
+//     padding-right: 2.5rem;
+//     cursor: auto;
+//     border: none;
+//     :hover {
+//         transition: all 0.2s ease-in-out;
+//         background-color: #999999;
+//         color: white;
+//         ::placeholder {
+//             color: white;
+//         }
+//     }
+// `;
 const StyledButton = styled.button`
     padding: 10px 10px;
     border: 1px solid lightgrey;
@@ -102,17 +104,21 @@ const StyledButton = styled.button`
 `;
 
 const Nav = () => {
-    const [isLogin,setLogin] = useState(false);
-    const loginChange = (e) => {
-        setLogin(e.target.value);
-    }
+    const navigate = useNavigate();
     // const isLogin = false;
+    const islogout = async () => {
+        await logout()
+            // localStorage.removeItem('token');
+            alert('로그아웃이 되었습니다.')
+            console.log(alert);
+            navigate('/');
+    }
 
     return (
 
     <NavContainer>
         <StyledButton>        
-            <Link to="/">
+            <Link to="/POSTList">
                 <img src={logo} alt='logo' style={{width:'200px', height:'80px'}} />
             </Link>
         </StyledButton>      
@@ -124,12 +130,10 @@ const Nav = () => {
             <Link to="/POSTWrite">게시글 등록</Link>
         
             <StyledButton>
-            { isLogin ? <Link to="/" onClick={()=>{loginChange();}}><ImportOutlined /></Link>
-                    :<Link to="/login" onClick={()=>{loginChange();}}><UserOutlined /></Link>
-                }
+                <Link to="/mypage"><UserOutlined /></Link>
             </StyledButton>
             <StyledButton>
-                <Link to="/mypage"><WalletOutlined /></Link>
+                <Link to="/logout" onClick={islogout}><ImportOutlined /></Link>    
             </StyledButton>
         </NavBar>
     </NavContainer>
