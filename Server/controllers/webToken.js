@@ -14,9 +14,10 @@ module.exports={
         return res.cookie("jwt",accessToken);
     },
 
-    isAuthorized: async (req, res, next) => {
-        
+    isAuthorized: async (req, res, next) => {    
         const authHeader = req.get('Authorization');
+        //console.log(authHeader);
+
         if (!(authHeader && authHeader.startsWith('Bearer '))) {
             //return res.status(401).json(AUTH_ERROR);
             return false;
