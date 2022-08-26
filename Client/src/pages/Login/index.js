@@ -3,14 +3,12 @@ import "antd/dist/antd.css";
 import { Tabs,  Row,  Col,  Input,  Space,  Button} from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
-import { useUserInfo } from "../../utils/Hooks";
 import { login } from "../../APIs/auth";
 
 const { TabPane } = Tabs;
 
 const LogIn = () => {
     const navigate = useNavigate();
-    const [userInfo, setUserInfo] = useUserInfo((state) => [state.userInfo, state.setUserInfo]);
     const [user, setUser] = useState({
         userName:'',
         password:'',
@@ -33,7 +31,7 @@ const LogIn = () => {
             
             localStorage.setItem('token', loginData.accessToken);
             //setUserInfo({accessToken, userName})
-            navigate('/');
+            navigate('/POSTList');
         })
         .catch((err) => {
             if (err) {
