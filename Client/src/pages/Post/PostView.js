@@ -29,7 +29,7 @@ export default function PostView() {
             .then((res) => {
                 console.log(res);
                 alert("삭제하였습니다.");
-                navigate(`/`);
+                navigate(`/POSTList`);
             })
             .catch((err) => {
                 if (err) {
@@ -44,7 +44,7 @@ export default function PostView() {
             .then((res) => {
                 console.log(res);
                 alert("추천하였습니다.");
-                navigate(`/`);
+                navigate(`/POSTList`);
             })
             .catch((err) => {
                 if (err) {
@@ -59,7 +59,7 @@ export default function PostView() {
                 <h2>커뮤니티</h2>
             </div>
             <div className="bt_wrap">
-                <Link to="/">
+                <Link to="/POSTList">
                     목록
                 </Link>
                 <Button
