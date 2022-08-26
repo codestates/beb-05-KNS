@@ -9,16 +9,16 @@ const nftRoutes = require('./routes/nftRoute');
 
 const yaml = require("yamljs");
 const swaggerUI = require("swagger-ui-express");
-
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-//const fs = require("fs");
-//const https = require("https");
-const errorHandler = require('./errors/error-handler')
+const errorHandler = require('./errors/error-handler');
 
 const app = express();
 const PORT = 8080;
+const {createServerAccount} = require('./serverInit');
+//const fs = require("fs");
+//const https = require("https");
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -46,6 +46,8 @@ app.use(errorHandler);
 models.sequelize.sync().then( () => {
   app.listen(PORT, async () => {
     console.log(`DB연결 성공 및 ${PORT} 구동중`);
+    await createServerAccount();
+
   });
 
     /* if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')) {
