@@ -26,7 +26,7 @@ export const login = async (userName, password) => {
 //GET /logout 로그아웃
 export const logout = () => {
     //토큰 삭제하면 될듯. 호출한 곳에서 로그아웃&페이지 이동처리
-    localStorage.removeItem("user");    
+    localStorage.removeItem('token');    
 };
 
 //GET /auth/{userID} 회원정보 조회
