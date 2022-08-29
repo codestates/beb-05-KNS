@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from "react";
 import { Tabs, Layout } from 'antd';
 
 import  NFTList  from '../../components/Contract/NFTList';
@@ -6,12 +6,15 @@ import  MyPostLog  from '../../components/Myinfo/MyPostLog';
 import  TokenExchage  from '../../components/Myinfo/TokenExchage';
 import  Myinfo  from '../../components/Myinfo';
 import  TokenMint  from '../../components/Contract/NFTMint';
-import { myInfo } from '../../APIs/auth';
-import { getMyPostList } from '../../APIs/post';
-import { getTokenbal, sendToken, buyNFT, getNFTList, getMyNftList  } from '../../APIs/contract';
+
+import {useUserInfo} from '../../utils/Hooks'; // State Hooks
 
 const { TabPane } = Tabs;
-const myPage = () => {
+
+export default function MyPage() {
+
+   //const [userInfo, setUserInfo] = useUserInfo((state) => [state.userInfo, state.setUserInfo]); //Hooks 불러오기
+ 
     return (
         <Layout 
         className="site-layout-background"
@@ -46,5 +49,3 @@ const myPage = () => {
         </Layout>
     )
 };
-
-export default myPage;

@@ -49,10 +49,11 @@ export const getTokenbal = async (userId) => {
     return await Axios.get(`${API_URL}/token/${userId}`);
 };
 //PUT /token/{userId}/transfer ERC20 토큰 전송
-export const sendToken = async (userId, targetId, tAmount) => {
+export const sendToken = async (userId, targetAddress, tAmount) => {
+    //console.log("ID +" + tAmount);
     return await Axios.put(`${API_URL}/token/${userId}/transfer`, {
-        targetid: targetId,
-        tokenamount: tAmount,
+        toAddress: targetAddress,
+        toTokenAmount: tAmount,
     });
 };
 

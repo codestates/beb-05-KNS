@@ -105,7 +105,8 @@ export default function PostView() {
                         <div className="cont">{postContent.content}</div>
                     </div>
                     <div>
-                        {<Comment  id = {id}/> }
+                        {<Comment  id = {id}
+                                   reqUserName = {postContent.reqUserName}/>}
                     </div>
                     
                 </div>

@@ -3,12 +3,21 @@ import NFTSlot from '../Contract/NFTSlot';
 import { Col, Row, Divider } from 'antd';
 import { useMyNftList } from '../../utils/Hooks'
 import { getMyNftList } from '../../APIs/contract';
+import {getUserId} from '../../APIs/auth' //API
 
 const MyNFT = () => {
     //const [myNftList, setMyNftList] = useMyNftList((state) => [state.myNftList, state.setMyNftList]); //Hooks 불러오기
     const [myNftList,setMyNftList] = useState([]);
     const getNftList = async () =>{
-        const { data: {data} } = await getMyNftList(1); //API 호출
+        let userId;
+
+        await getUserId()
+            .then((res) => {    
+                let userInfo = res.data.data.userInfo;         
+                userId = userInfo.id;
+            })
+
+        const { data: {data} } = await getMyNftList(userId); //API 호출
         setMyNftList([...data]);
         console.log("getMyNftList",data,myNftList );
     }

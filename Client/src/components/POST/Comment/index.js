@@ -39,7 +39,7 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
   </>
 );
 
-const App = ({id}) => {
+const App = ({id, reqUserName}) => {
   const [comments, setComments] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [value, setValue] = useState('');
@@ -66,7 +66,7 @@ const App = ({id}) => {
       setComments([
         ...comments,
         {
-          userName: 'Han Solo',
+          userName: reqUserName,
           avatar: 'https://joeschmoe.io/api/v1/random',
           content: <p>{value}</p>,
           createdAt: moment().fromNow(),
@@ -74,17 +74,13 @@ const App = ({id}) => {
       ]);
     }, 1000);
 
-    const userId = 1;
-    //console.log(id);
-
     const data = {
-      userId: userId,
       content: value,
     };
 
     await writeReply(data, id)
     .then((res) => {
-        console.log(res);
+        //console.log(res);
     })
     .catch((err) => {
         if (err) {

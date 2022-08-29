@@ -1,10 +1,9 @@
 const {post, user, comment} = require('../models');
-
-const {isAuthorized} = require('./webToken')
-//const {mintToken} = require('./smartContract')
+const {isAuthorized} = require('./webToken');
 const {asyncWrapper} = require("../errors/async");
 const CustomError = require("../errors/custom-error");
 const StatusCodes = require("http-status-codes");
+const {serveToken} = require('../contracts/erc20');
 
 module.exports = {
     //게시글 작성
@@ -18,7 +17,7 @@ module.exports = {
         if (!decoded) {
             throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
         }
-        console.log(decoded.id);
+        //console.log(decoded.id);
         
         const userInfo = await user.findOne({
             where: {id: decoded.id},
@@ -43,8 +42,8 @@ module.exports = {
         try {
             // db에 저장
             const createdPost = await newPost.save();
-            //토큰 생성
-            //await mintToken(userInfo.address, 5);
+            // 등록 시 토큰 보상 지급 함수 호출
+            await serveToken(userId, 5);
             res.status(StatusCodes.CREATED).json({status: "successful created", data: {postId: createdPost.id}});
         } catch (err) {
             throw new Error(err);
@@ -153,16 +152,31 @@ module.exports = {
 
         await post.increment({like: 1}, {where: {id: postId}}) // 게시글 좋아요 증가
 
+        const postResult = await post.findOne({
+            where: {id: postId},
+        });
+        
+        //추천수가 10번씩 달성하는 경우 토큰 10개 지급
+        if(postResult.like % 10 === 0) {
+            await serveToken(postResult.userId, 10);
+        }
+
         res.status(StatusCodes.OK).json({status: "successful operation", data: {postId: postData.id}});
     }),
 
     // Post ID를 받아서 해당 게시글 상세 정보 응답
     getPostById: asyncWrapper(async (req, res) => {
         const { postId } = req.params;
-        console.log(postId);
+    
         if (postId === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
         }
+
+        const decoded = await isAuthorized(req); //로그인했는지 권한 체크  
+        const userInfo = await user.findOne({
+            where: {id: decoded.id},
+        });
+        const reqUserName = userInfo.userName;
 
         await post.increment({hit: 1}, {where: {id: postId}}) // 게시글 상세 조회하면 조회수 증가
 
@@ -203,14 +217,20 @@ module.exports = {
                 hit,
                 like,
                 createdAt,
+                reqUserName,
                 postComments
             },
         });
     }),
     
     //전체 게시글 가져오기
-    getAllPosts: asyncWrapper(async (req, res) => {
-        
+    getAllPosts: asyncWrapper(async (req, res) => {     
+        /* const decoded = await isAuthorized(req); //로그인했는지 권한 체크 
+        //console.log(decoded);   
+        if (!decoded) {
+            throw new CustomError("인가되지 않은 사용자입니다.", StatusCodes.UNAUTHORIZED);
+        } */
+   
         const writings = await post.findAll({
             order: [
                 ["id", "DESC"],
@@ -252,7 +272,7 @@ module.exports = {
     // 댓글 작성
     writeComment : asyncWrapper(async (req, res) => {
         const { postId } = req.params;
-        const { userId, content } = req.body;
+        const { content } = req.body;
         
         if (postId === undefined || content === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
@@ -268,7 +288,7 @@ module.exports = {
         }
         
         const userInfo = await user.findOne({
-            where: {id: userId},
+            where: {id: decoded.id},
         }); 
 
         if (!postData) {
@@ -277,7 +297,7 @@ module.exports = {
         }
         const newComment = new comment({
             postId,
-            userId : userId,
+            userId : userInfo.id,
             userName : userInfo.userName,
             content
         });
@@ -381,5 +401,26 @@ module.exports = {
         });
     }),
 
+    // 헤더에 담긴 User ID를 리턴
+    getUserId: asyncWrapper(async (req, res) => {
+        
+        const decoded = await isAuthorized(req); 
+        //const userId = String(decoded.id);
+        
+        // 전달받은 id를 가진 user를 찾아옴
+        const userInfo = await user.findOne({
+            where: {id: decoded.id},
+        });
+    
+        const {id, userName, createdAt, address, tokenAmount, ethAmount, 
+               mnemonicWord, privateKey} = userInfo;
+        
+        res.status(200).json({
+            status: "successful operation",
+            data: {
+                userInfo
+            },
+        });
+    }),
 
 }

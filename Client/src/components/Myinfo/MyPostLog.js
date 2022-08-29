@@ -2,6 +2,7 @@ import { Table,Button,Modal } from 'antd';
 import React, {useEffect, useState} from 'react';
 import { getMyPostList, deletePost } from '../../APIs/post';
 import { useMyPostList } from '../../utils/Hooks'
+import {getUserId} from '../../APIs/auth' //API
 
 const columns = [
   {
@@ -35,7 +36,15 @@ const MyPostLog = () => {
   const [visible, setVisible] = useState(false);
 
   const getmyPost = async () =>{
-      const { data: {data : list} } = await getMyPostList(1); //API 호출  
+      let userId;
+
+      await getUserId()
+          .then((res) => {    
+              let userInfo = res.data.data.userInfo;  
+              userId = userInfo.id;
+          })
+
+      const { data: {data : list} } = await getMyPostList(userId); //API 호출  
       setOuput(list); 
       setsaveList(list); //가공해서 써야해서 불필요한 모든 정보를 담는 배열은 여기에 저장
   }

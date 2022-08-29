@@ -1,18 +1,28 @@
 import React, {useEffect,useState} from 'react';
 import { Badge, Descriptions } from 'antd';
-import { myInfo } from '../../APIs/auth';
+import { myInfo, getUserId } from '../../APIs/auth';
 import { useUserInfo } from '../../utils/Hooks'
 
 const MyInfo = () => {    
+    
     //const [userInfo, setUserInfo] = useUserInfo((state) => [state.userInfo, state.setUserInfo]); //Hooks 불러오기
     const [userInfo,setUserInfo] = useState({});
+  
     const getUser = async () =>{
-        console.log("getuser");
-        const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(1); //API 호출
+        let userId;
+
+        await getUserId()
+            .then((res) => {    
+                let userInfo = res.data.data.userInfo;   
+                userId = userInfo.id;
+            })
+          
+        const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(userId); //API 호출
         setUserInfo({userName,address,tokenAmount,ethAmount,createdAt});        
     }
 
     useEffect(() => {
+        
         getUser();
     }, []);
 

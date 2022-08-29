@@ -11,13 +11,18 @@ export default function PostList() {
         (state) => [state.postList, state.setPostList]
     ); //Hooks 불러오기 */
     const [postList, setPostList] = useState([]);
-
+    
     useEffect(() => {
        getPostList()
         .then((res) => {
             const postData = jsonToArray(res.data.data);
             setPostList(postData);
-        }); 
+        })
+        .catch((err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
         
     }, []);
 
