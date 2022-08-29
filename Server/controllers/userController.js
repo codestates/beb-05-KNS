@@ -97,33 +97,21 @@ module.exports = {
       });
   }),
 
-  // 무료로 0.1 이더 받기(faucet)
+  // 무료로 1 이더 받기(faucet)
   getEthFaucet : asyncWrapper(async (req, res) => {
+    
     const userId = req.params.userId;
-    const faucetEthAmount = 0.1;
-
-    if (userId === undefined) {
-        throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
-    }
-
+    
     // 전달받은 id를 가진 user를 찾아옴
     const userData = await user.findOne({
-      where: {id: userId},
+        where: {id: userId},
     });
-    if (!userData) {
-        // 404 not found
-        throw new CustomError(`유저 정보가 존재하지 않습니다.`, StatusCodes.NOT_FOUND);
-    }
 
     const {address} = userData; //주소를 가져온다.
 
-    const user = getEth(address, userId); // 이더 요청
-    res.status(200).send({ user });
-    
-    /* await userData.update({
-      ethAmount : ethAmount + faucetEthAmount
-    }); */
-    //res.status(StatusCodes.OK).json({status: "successful operation" });
+    const userInfo = getEth(address, userId); // 이더 요청
+    //console.log(userInfo);
+    res.status(200).send({ userInfo });
   }),
 
 }

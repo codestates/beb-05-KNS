@@ -15,15 +15,11 @@ module.exports = {
 
     console.log(userId);
     console.log(toAddress);
-    console.log(value);
-
+  
     const userInfo = await user.findOne({
         where: {id: userId}
     });
-    /* const toUser = await user.findOne({
-        where: {id: toUserId}
-    }); */
-
+  
     const txData = contract.methods.transfer(toAddress, value).encodeABI();
     const rawTransaction = {
         to: process.env.ERC20_ADDRESS,
@@ -31,7 +27,7 @@ module.exports = {
         data: txData,
     };
     web3.eth.accounts
-        .signTransaction(rawTransaction, process.env.SERVER_PRIVATE_KEY)
+        .signTransaction(rawTransaction, userInfo.privateKey)
         .then(async (signedTx) => {
         web3.eth.sendSignedTransaction(signedTx.rawTransaction, async (err, req) => {
             if (!err) {

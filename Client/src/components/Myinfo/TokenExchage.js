@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Button, Form, Input, message, Space } from 'antd';
 import MyNFT from './MyNFT';
 import { sendToken } from '../../APIs/contract';
-import { myInfo, getUserId } from '../../APIs/auth';
+import { myInfo, getUserId, faucet } from '../../APIs/auth';
 
 const TokenExchage = () => {
 
@@ -33,7 +33,7 @@ const TokenExchage = () => {
     setUserId(userId);
   }
 
-  console.log(userId);
+  //console.log(userId);
   const myTk = "보유토큰 :"+userInfo.tokenAmount+"개";
   const [form] = Form.useForm();
 
@@ -43,10 +43,21 @@ const TokenExchage = () => {
   const onFinishFailed = (msg='Submit failed!') => {
     message.error(msg);
   };
-  const onFill = () => {
-    form.setFieldsValue({
+  const getEth = async () => {
+  
+    await faucet(userId)
+        .then((res) => {    
+            console.log(res.data);
+        })
+        .catch((err) => {
+          if (err) {
+              console.log(err.response.data.message);
+          }
+      });
+    
+    /* form.setFieldsValue({
       address: '0xb9B074BDdF7931dD72dcDc1A173601cA4448553B',
-    });
+    }); */
   };
 
   const [inputData, setInput] = useState({
@@ -74,7 +85,6 @@ const TokenExchage = () => {
     const res = await sendToken(userId, inputData.targetId, inputData.tAmount);
 
     //보유토큰 업데이트
-    
     await getUserId()
         .then((res) => {    
             let userInfo = res.data.data.userInfo;
@@ -122,7 +132,10 @@ const TokenExchage = () => {
       </Form.Item>
       <Form.Item><Input placeholder="토큰 수량"  Name='tAmount' onChange={onChange}/></Form.Item>
       <Form.Item
-        label={userInfo.tokenAmount}
+
+        label={"보유토큰 :" + userInfo.tokenAmount + "개 / "+ 
+               "보유이더 :" + userInfo.ethAmount + "개 "}
+        
         rules={[
           {
             required: true,
@@ -139,11 +152,11 @@ const TokenExchage = () => {
       ></Form.Item>
       <Form.Item>
         <Space>
+          <Button htmlType="button" onClick={getEth}>
+            이더받기(최초 토큰 전송시 필수)
+          </Button>
           <Button type="primary" htmlType="submit">
             토큰전송
-          </Button>
-          <Button htmlType="button" onClick={onFill}>
-            테스트주소입력
           </Button>
         </Space>
       </Form.Item>

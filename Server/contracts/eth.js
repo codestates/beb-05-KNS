@@ -12,7 +12,7 @@ module.exports = {
         from: sendAccount,
         to: address,
         gas: 500000,
-        value: web3.utils.toWei("0.1", "ether"),
+        value: web3.utils.toWei("1", "ether"),
       };
       await web3.eth.accounts.signTransaction(tx, privateKey).then((signedTx) => {
         web3.eth.sendSignedTransaction(signedTx.rawTransaction, async (err, hash) => {
@@ -20,7 +20,7 @@ module.exports = {
             console.log("transaction 실패 : ", err);
           } else {
             const balance = await web3.eth.getBalance(address); // 이더 잔액을 가져옴
-
+            console.log(web3.utils.fromWei(balance, "ether"));
             // 사용자 정보에 이더 잔액 업데이트
             await user.update(
               { ethAmount: parseFloat(web3.utils.fromWei(balance, "ether")) },
