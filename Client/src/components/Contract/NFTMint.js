@@ -132,17 +132,17 @@ const UseMintNftimg = () => {
         console.log('----file url----',upLoadIPFSMetaDataUrl); // JSON 파일 경로
         setMintData("METADATA", upLoadIPFSMetaDataUrl);
 
-        minting(); //서버 전송
+        minting(upLoadIPFSUrl, upLoadIPFSMetaDataUrl); //서버 전송
     }
     
-    const minting = async () =>{
+    const minting = async (upLoadIPFSUrl, upLoadIPFSMetaDataUrl) =>{
         const data = {
             tokenId : 0, 
             tokenName: nftData.NFTName, 
             desc: nftData.NFTDesc, 
             tx_hash: "", 
-            tokenURI: nftData.MetaData, 
-            img: nftData.ExLink,
+            tokenURI: upLoadIPFSMetaDataUrl, 
+            img: upLoadIPFSUrl,
         }
         const { res } = await mintNFT(data); //API 호출
         console.log(res);
