@@ -16,7 +16,9 @@ const errorHandler = require('./errors/error-handler');
 
 const app = express();
 const PORT = 8080;
-const {createServerAccount} = require('./serverInit');
+const {createServerAccount, deployContracts} = require('./serverInit');
+const{KNSTokenBytecode, KNSTokenAbi} = require('./contracts/KNSToken');
+
 //const fs = require("fs");
 //const https = require("https");
 
@@ -47,7 +49,8 @@ models.sequelize.sync().then( () => {
   app.listen(PORT, async () => {
     console.log(`DB연결 성공 및 ${PORT} 구동중`);
     await createServerAccount();
-
+    //await deployContracts("KNS", KNSTokenAbi, KNSTokenBytecode);
+    
   });
 
     /* if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')) {

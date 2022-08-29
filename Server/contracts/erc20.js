@@ -1,45 +1,50 @@
 const Web3 = require("web3");
-const web3 = new Web3("HTTP://127.0.0.1:7545");
+const web3 = new Web3(process.env.NODE_URI);
 var Contract = require("web3-eth-contract");
-//const erc20Abi = require("../erc20Abi");
 const { user } = require("../models");
 require("dotenv").config();
-Contract.setProvider("HTTP://127.0.0.1:7545");
-//var contractABI = erc20Abi;
+Contract.setProvider(process.env.NODE_URI);
+
+const {KNSTokenAbi} = require("./KNSToken");
+var contractABI = KNSTokenAbi;
 
 module.exports = {
 
-    sendToken: async (userId, toUserId, value) => {
-    var contract = await new Contract(contractABI, process.env.ERC20ADDR);
+    sendToken: async (userId, toAddress, value) => {
+    var contract = await new Contract(contractABI, process.env.ERC20_ADDRESS);
 
-    const user = await user.findOne({
+    console.log(userId);
+    console.log(toAddress);
+    console.log(value);
+
+    const userInfo = await user.findOne({
         where: {id: userId}
     });
-    const toUser = await user.findOne({
+    /* const toUser = await user.findOne({
         where: {id: toUserId}
-    });
+    }); */
 
-    const txData = contract.methods.transfer(toUser.address, value).encodeABI();
+    const txData = contract.methods.transfer(toAddress, value).encodeABI();
     const rawTransaction = {
-        to: process.env.ERC20ADDR,
+        to: process.env.ERC20_ADDRESS,
         gas: 100000,
         data: txData,
     };
     web3.eth.accounts
-        .signTransaction(rawTransaction, user.privateKey)
+        .signTransaction(rawTransaction, process.env.SERVER_PRIVATE_KEY)
         .then(async (signedTx) => {
         web3.eth.sendSignedTransaction(signedTx.rawTransaction, async (err, req) => {
             if (!err) {
             await contract.methods
-                .balanceOf(toUser.address)
+                .balanceOf(toAddress)
                 .call()
                 .then(async (balance) => {
-                console.log(toUserId + " Token Balance: " + balance);
+                console.log(toAddress + " Token Balance: " + balance);
 
                 // 토큰 받은 사용자 토큰 잔액 업데이트
                 await user.update(
                   { tokenAmount: balance },
-                  { where: {id: toUserId} }
+                  { where: {address: toAddress} }
                 );
 
                 // 토큰 전송 사용자 토큰 잔액 차감
@@ -58,6 +63,7 @@ module.exports = {
         });
     },
 
+  // 토큰 보상 지급 함수
   serveToken: async (userId, value) => {
 
     const userData = await user.findOne({
@@ -65,12 +71,12 @@ module.exports = {
     });
 
     const { address } = userData;
-    const sender = process.env.TOKEN_ADDRESS;
-    const senderPK = process.env.TOKEN_PRIVATEKEY;
-    var contract = await new Contract(contractABI, process.env.ERC20ADDR);
+    const sender = process.env.SERVER_ADDRESS;
+    const senderPK = process.env.SERVER_PRIVATE_KEY;
+    var contract = await new Contract(contractABI, process.env.ERC20_ADDRESS);
     const txData = contract.methods.transfer(address, value).encodeABI();
     const rawTransaction = {
-      to: process.env.ERC20ADDR,
+      to: process.env.ERC20_ADDRESS,
       gas: 100000,
       data: txData,
     };

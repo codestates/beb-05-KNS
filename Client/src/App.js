@@ -19,7 +19,7 @@ import PostEdit     from './pages/Post/PostEdit';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Signup from './pages/Signup';
-import MyPage from './pages/MyPage';
+import MyPage from './pages/MyPage/index';
 import NotFound from './pages/NotFound';
 
 const MainContainer = styled.div`
@@ -34,7 +34,7 @@ const MainContainer = styled.div`
 
 function App() {
   useEffect(() => {  }, [ ]);
-
+  
     return (
       <BrowserRouter>   
           <Navi />      

@@ -29,10 +29,7 @@ export default function PostEdit() {
 
     const updatePost = async () => {
 
-        const userId = 1; // 임시 사용자 아이디 변수
-
         const data = {
-            userId: userId,
             title: title,
             content: content,
             img: ""

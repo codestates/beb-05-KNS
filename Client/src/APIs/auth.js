@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {getHeaders} from './token';
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -52,3 +53,12 @@ export const authHeader = () => {
 export const Axios = axios.create({
     headers: authHeader(),
 });
+
+//사용자 아이디 가져오는 함수
+export const getUserId = async () => {
+    return await Axios.get(`${API_URL}/userId`, 
+        {
+            headers: getHeaders()
+        }       
+    );
+};

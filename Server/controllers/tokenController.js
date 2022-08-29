@@ -5,6 +5,7 @@ const {isAuthorized} = require('./webToken')
 const {asyncWrapper} = require("../errors/async");
 const CustomError = require("../errors/custom-error");
 const StatusCodes = require("http-status-codes");
+const {sendToken} = require('../contracts/erc20');
 
 module.exports = {
 
@@ -39,14 +40,14 @@ module.exports = {
     //ERC20 토큰 전송
     transferToken : asyncWrapper(async (req, res) => {
       const userId = req.params.userId;
-      const {toUserId, toTokenAmount} = req.body;
-
-      if (toUserId === undefined || toTokenAmount === undefined) {
+      const {toAddress, toTokenAmount} = req.body;
+      
+      if (toAddress === undefined || toTokenAmount === undefined) {
           throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.BAD_REQUEST);
       }
 
       const toUserData = await user.findOne({
-          where: {id: toUserId},
+          where: {address: toAddress},
       });
       
       if (!toUserData) {
@@ -67,6 +68,7 @@ module.exports = {
       }
 
       // 토큰 전송
+      await sendToken(userId, toAddress, toTokenAmount);
       //const user = erc20.sendToken(userId, toUserId, toTokenAmount);
        
       res.status(StatusCodes.OK).json({status: "successful operation"});

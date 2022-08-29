@@ -5,7 +5,6 @@ const API_URL = process.env.REACT_APP_SERVER_URL;
 
 //POST /post 게시글 작성
 export const writePost = async (data) => {
-    console.log(getHeaders());
     return await Axios.post(`${API_URL}/post`, 
         {
             title: data.title,
@@ -109,5 +108,6 @@ export const getMyPostList = async (userId) => {
         } 
     );
 };
+
 
 

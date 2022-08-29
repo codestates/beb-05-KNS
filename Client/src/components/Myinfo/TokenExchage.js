@@ -1,11 +1,40 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button, Form, Input, message, Space } from 'antd';
 import MyNFT from './MyNFT';
 import { sendToken } from '../../APIs/contract';
+import { myInfo, getUserId } from '../../APIs/auth';
 
 const TokenExchage = () => {
-  const haveToken = 15; //유저정보에서
-  const myTk = "보유토큰 :"+haveToken+"개";
+
+  const [userInfo,setUserInfo] = useState({});
+  const [userId,setUserId] = useState("");
+  const [tokenAmount,setTokenAmount] = useState("");
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = async () =>{
+    let userId;
+
+    await getUserId()
+        .then((res) => {    
+            let userInfo = res.data.data.userInfo;
+            userId = userInfo.id;
+        })
+        .catch((err) => {
+          if (err) {
+              console.log(err.response.data.message);
+          }
+      });
+
+    const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(userId); //API 호출
+    setUserInfo({userName,address,tokenAmount,ethAmount,createdAt}); 
+    setUserId(userId);
+  }
+
+  console.log(userId);
+  const myTk = "보유토큰 :"+userInfo.tokenAmount+"개";
   const [form] = Form.useForm();
 
   const onFinish = (msg='Submit success!') => {
@@ -40,8 +69,28 @@ const TokenExchage = () => {
       (inputData.targetId === "")&&onFinishFailed('받을사람 주소를 입력하세요.');
       (inputData.tAmount === 0)&&onFinishFailed('보낼 토큰의 수를 입력하세요.');
       return;
-    }
-    const res = await sendToken(1, inputData.targetId, inputData.tAmount);
+    } 
+    //토큰 전송
+    const res = await sendToken(userId, inputData.targetId, inputData.tAmount);
+
+    //보유토큰 업데이트
+    
+    await getUserId()
+        .then((res) => {    
+            let userInfo = res.data.data.userInfo;
+            setUserId(userInfo.id);
+        })
+        .catch((err) => {
+          if (err) {
+              console.log(err.response.data.message);
+          }
+      });
+
+    const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(userId); //API 호출
+    setUserInfo({userName,address,tokenAmount,ethAmount,createdAt}); 
+    //setUserId(userId);
+    //myTk = "보유토큰 :"+userInfo.tokenAmount+"개";
+
     onFinish('전송에 성공하였습니다.');
   }
 
@@ -73,7 +122,7 @@ const TokenExchage = () => {
       </Form.Item>
       <Form.Item><Input placeholder="토큰 수량"  Name='tAmount' onChange={onChange}/></Form.Item>
       <Form.Item
-        label={myTk}
+        label={userInfo.tokenAmount}
         rules={[
           {
             required: true,
@@ -98,7 +147,7 @@ const TokenExchage = () => {
           </Button>
         </Space>
       </Form.Item>
-      <MyNFT />
+      <MyNFT/>
     </Form>    
     )
 };
