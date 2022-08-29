@@ -35,11 +35,6 @@ export const myInfo = async (userID) => {
     return await Axios.get(`${API_URL}/user/${userID}`);    
 };
 
-//POST /auth/{addr} 무료로 이더 받기(faucet)
-export const faucet = async (addr) => {
-    return await Axios.post(`${API_URL}/user/${addr}`);
-}
-
 export const authHeader = () => {
     const user = localStorage.getItem("user");
 
@@ -62,3 +57,17 @@ export const getUserId = async () => {
         }       
     );
 };
+
+//사용자 아이디 가져오는 함수
+export const faucet = async (userId) => {
+    return await Axios.put(`${API_URL}/user/${userId}/faucet`, 
+        {
+            headers: getHeaders(),
+        }       
+    );
+};
+
+/* //POST /auth/{addr} 무료로 이더 받기(faucet)
+export const faucet = async (addr) => {
+    return await Axios.post(`${API_URL}/user/${addr}`);
+} */
