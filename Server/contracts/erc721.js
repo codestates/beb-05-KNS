@@ -1,6 +1,9 @@
 const Web3 = require("web3");
+require("dotenv").config();
 const web3 = new Web3(process.env.NODE_URI);
-const { erc20ABI, erc721ABI } = require('../Abi');
+const { erc721ABI } = require('../Abi');
+const erc721Abi = erc721ABI();
+const erc721Contract = new web3.eth.Contract(erc721Abi, process.env.ERC721ADDR);
 
 module.exports = {
 
@@ -9,7 +12,6 @@ module.exports = {
         const sendAccount = process.env.SERVER_ADDRESS;
         const privateKey = process.env.SERVER_PRIVATE_KEY;    
         const nonce = await web3.eth.getTransactionCount(sendAccount, 'latest');
-        const erc721Contract = new web3.eth.Contract(erc721ABI, process.env.ERC721ADDR);
         const data = erc721Contract.methods.setToken(process.env.ERC20ADDR).encodeABI();
         const tx = {
             from: sendAccount,
@@ -37,16 +39,19 @@ module.exports = {
         const sendAccount = process.env.SERVER_ADDRESS;
         const privateKey = process.env.SERVER_PRIVATE_KEY;
         const nonce = await web3.eth.getTransactionCount(sendAccount, 'latest');
-        const erc721Contract = new web3.eth.Contract(erc721ABI, process.env.ERC721ADDR);
-        const txData = erc721Contract.methods.mintNFT(receiveAccount, tokenUri).encodeABI();
+        console.log(`--0000--`,nonce, erc721Contract.methods);
+        const txData = erc721Contract.methods
+            .mintNFT(receiveAccount, tokenUri)
+            .encodeABI();
         const tx = {
             from: sendAccount,
-            to: contractE721Addr,
+            to: process.env.ERC721ADDR,
             nonce: nonce,
             gas: 100000,
             data: txData,
         };
 
+        console.log(`--1111--`,privateKey);
         web3.eth.accounts.signTransaction(tx, privateKey).then(async (signedTx) => {
             web3.eth.sendSignedTransaction(signedTx.rawTransaction, async (err, req) => {
                 if (!err) {
@@ -54,7 +59,7 @@ module.exports = {
                         .checkTokenId(tokenUri)
                         .call();
 
-                    console.log("성공1 newTId",newTokenId);
+                    console.log("성공1 newTId",req);
                     return newTokenId;                
                 } else {
                     console.log("실패1", err);

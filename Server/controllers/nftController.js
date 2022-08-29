@@ -71,12 +71,14 @@ module.exports = {
         });
         // 토큰 전송할 NFT 정보를 가져옴
         const fromNFTData = await nft.findOne({
-            where: {tokenId: nftId}
+            where: {id: nftId}
         });
 
         // NFT 구매
-        const newTokenId = await erc721.mintToken( toUserData.userId, fromNFTData.tokenURI);
-        if(newTokenId){            
+        console.log('----file url----',toUserData.address, fromNFTData.tokenURI);
+        const newTokenId = await erc721.mintToken( toUserData.address, fromNFTData.tokenURI);
+        if(newTokenId){           
+            console.log('------restoreToken: ' + newTokenId); 
             const res = await fromNFTData.update({
                 userId: toUserData.userId,
                 tokenId: newTokenId,
