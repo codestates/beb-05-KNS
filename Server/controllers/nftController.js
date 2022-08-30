@@ -75,18 +75,34 @@ module.exports = {
         });
 
         // NFT 구매
-        console.log('----file url----',toUserData.address, fromNFTData.tokenURI);
-        const newTokenId = await erc721.mintToken( toUserData.address, fromNFTData.tokenURI);
-        if(newTokenId){           
-            console.log('------restoreToken: ' + newTokenId); 
-            const res = await fromNFTData.update({
-                userId: toUserData.userId,
-                tokenId: newTokenId,
-                isBuy: true,
-            });
+        // console.log('----file url----',toUserData.address, fromNFTData.tokenURI);
+        const callDbupcall = async (result,uid,nftId,tx_hash) => {
+            if(result){           
+                //console.log('------restoreToken: ' + result);                 
+                                
+                nft.sequelize.query("SELECT MAX(id) FROM nfts", { type: nft.sequelize.QueryTypes.SELECT})
+                .then(async (result) => {
+                    const { 'MAX(id)': newTokenId } = result[0];
+                    //console.log('------queryresult: ',newTokenId);  
+                    const fromNFTData = await nft.findOne({
+                        where: {id: nftId}
+                    });       
+                    const result1 = await fromNFTData.update({
+                        userId: uid,
+                        tokenId: newTokenId+1,
+                        tx_hash: tx_hash,
+                        isBuy: true,
+                    });
+                    //console.log('------updateres: ',result1);
+                    res.status(StatusCodes.OK).json({status: "successful operation"})
+                })  
+            }
+            else{
+                console.log('----실패----'); 
+            }
         }
-        res.status(StatusCodes.OK).json({status: "successful operation"});
 
+        await erc721.mintToken( toUserData.address, fromNFTData.tokenURI, callDbupcall,toUserData.userId,nftId);             
     }),
 
     // NFT ID를 받아서 해당 NFT 상세 정보 응답

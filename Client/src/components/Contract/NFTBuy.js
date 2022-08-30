@@ -33,7 +33,7 @@ const NFTBuy = ({image, tokenId}) => {
     };
 
     const sendMsgBuy = async () => {
-      const res = await buyNFT(tokenId);
+      const res = await buyNFT(tokenId);//NFTID이다
       console.log("tokenId",tokenId,res);
     }
 
