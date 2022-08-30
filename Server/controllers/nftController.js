@@ -1,12 +1,9 @@
 const {nft, post, user, comment} = require('../models');
 const erc721 = require("../contracts/erc721");
-
 const {isAuthorized} = require('./webToken')
-//const {mintToken} = require('./smartContract')
 const {asyncWrapper} = require("../errors/async");
 const CustomError = require("../errors/custom-error");
 const StatusCodes = require("http-status-codes");
-//const {sendToken} = require('./smartContract')
 
 module.exports = {
     //NFT 생성
@@ -75,18 +72,29 @@ module.exports = {
         });
 
         // NFT 구매
-        console.log('----file url----',toUserData.address, fromNFTData.tokenURI);
-        const newTokenId = await erc721.mintToken( toUserData.address, fromNFTData.tokenURI);
-        if(newTokenId){           
-            console.log('------restoreToken: ' + newTokenId); 
-            const res = await fromNFTData.update({
-                userId: toUserData.userId,
-                tokenId: newTokenId,
-                isBuy: true,
-            });
+        const callDbupcall = async (result,uid,nftId,tx_hash) => {
+            if(result){               
+                nft.sequelize.query("SELECT MAX(id) FROM nfts", { type: nft.sequelize.QueryTypes.SELECT})
+                .then(async (result) => {
+                    const { 'MAX(id)': newTokenId } = result[0];
+                    const fromNFTData = await nft.findOne({
+                        where: {id: nftId}
+                    });       
+                    await fromNFTData.update({
+                        userId: uid,
+                        tokenId: newTokenId+1,
+                        tx_hash: tx_hash,
+                        isBuy: true,
+                    });
+                    res.status(StatusCodes.OK).json({status: "successful operation"})
+                })  
+            }
+            else{
+                console.log('----실패----'); 
+            }
         }
-        res.status(StatusCodes.OK).json({status: "successful operation"});
 
+        await erc721.mintToken( toUserData.address, fromNFTData.tokenURI, callDbupcall,toUserData.userId,nftId);             
     }),
 
     // NFT ID를 받아서 해당 NFT 상세 정보 응답

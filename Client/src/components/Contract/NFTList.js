@@ -23,7 +23,7 @@ const NFTList = () => {
     <div>        
         <Divider orientation="left">NFT SHOP</Divider>
         <Row gutter={{xs: 8,sm: 16,md: 24,lg: 32,}}>
-        {nftList.map( (Element,idx)=>{             
+        {nftList.filter((el)=>!el.isBuy).map( (Element)=>{             
             return (<Col className="gutter-row" span={7}>
                 <div style={{background: '#ffffff',padding: '2px 0'}}>
                     <NFTSlot isBuy={true} NftList={Element}/>

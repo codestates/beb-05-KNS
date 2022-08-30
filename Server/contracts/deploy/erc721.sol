@@ -33,7 +33,7 @@ contract NFTLootBox is ERC721URIStorage, Ownable {
 
         return newItemId;
     }
-
+    
     function setToken(address tokenAddress) public onlyOwner returns (bool) {
         require(tokenAddress != address(0x0));
         token = IERC20(tokenAddress);
