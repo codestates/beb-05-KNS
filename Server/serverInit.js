@@ -1,6 +1,8 @@
 const Web3 = require('web3');
 const {user} = require("./models");
 const {ethers} = require("ethers");
+const bcrypt = require("bcrypt");
+
 const provider = new ethers.providers.JsonRpcProvider(process.env.NODE_URI);
 //const {KNSTokenAbi}=require('./contracts/KNSToken');
 
@@ -42,12 +44,16 @@ module.exports = {
                     const serverAddress = accounts[0];
                     console.log(serverAddress);
 
+                    const salt = await bcrypt.genSalt(10);
+                    const cryptPassword = bcrypt.hashSync("admin", salt); //비밀번호 암호화
+
                     const newBody = {
                         userName: "admin",
-                        password: "admin",
+                        password: cryptPassword,
                         address: serverAddress,
                         mnemonicWord: "",
-                        privateKey: process.env.SERVER_PRIVATE_KEY
+                        privateKey: process.env.SERVER_PRIVATE_KEY,
+                        tokenAmount: 10000000
                         
                     };
                     const newAccount = new user(newBody);
