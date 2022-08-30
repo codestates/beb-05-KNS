@@ -14,6 +14,10 @@ const TokenExchage = () => {
     getUser();
   }, []);
 
+  useEffect(() => {
+    getUser();
+  }, [userId]);
+  
   const getUser = async () =>{
     let userId;
 
@@ -27,14 +31,12 @@ const TokenExchage = () => {
               console.log(err.response.data.message);
           }
       });
-
+      console.log("gogo = " + userId);
     const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(userId); //API 호출
     setUserInfo({userName,address,tokenAmount,ethAmount,createdAt}); 
     setUserId(userId);
   }
 
-  //console.log(userId);
-  const myTk = "보유토큰 :"+userInfo.tokenAmount+"개";
   const [form] = Form.useForm();
 
   const onFinish = (msg='Submit success!') => {
@@ -82,26 +84,26 @@ const TokenExchage = () => {
       return;
     } 
     //토큰 전송
-    const res = await sendToken(userId, inputData.targetId, inputData.tAmount);
-
-    //보유토큰 업데이트
-    await getUserId()
-        .then((res) => {    
-            let userInfo = res.data.data.userInfo;
-            setUserId(userInfo.id);
-        })
-        .catch((err) => {
+    await sendToken(userId, inputData.targetId, inputData.tAmount)
+      .then((res) => {
+        console.log(res);
+        //보유토큰 업데이트
+        onFinish('전송에 성공하였습니다.');
+        
+        getUser();
+      })
+      .catch((err) => {
           if (err) {
-              console.log(err.response.data.message);
+              onFinishFailed(err.response.data.message);
+              //alert(err.response.data.message);
           }
       });
 
-    const { data: {data : {userName,address,tokenAmount,ethAmount,createdAt}}} = await myInfo(userId); //API 호출
-    setUserInfo({userName,address,tokenAmount,ethAmount,createdAt}); 
+    
     //setUserId(userId);
     //myTk = "보유토큰 :"+userInfo.tokenAmount+"개";
 
-    onFinish('전송에 성공하였습니다.');
+     
   }
 
     return (
