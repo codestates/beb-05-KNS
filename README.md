@@ -8,11 +8,11 @@
 ![image](https://user-images.githubusercontent.com/70362443/187324430-426314e7-339c-4803-bceb-121333e846fb.png)
 
 ## Contributors
-|---|---|
-|김다한(팀장)|💻 Front-end|
-|김지훈|💻 Front-end|
-|강인국|💻 Front-end|
-|김다한(팀장)|💻 Front-end|
+|이름|Position & Role|
+|:---:|:---:|
+|김다한(팀장)|💻 FE, BE, SC|
+|김지훈|💻 FE, BE, SC|
+|강인국|💻 FE, BE, SC|
 
 ## Commands
 - ### Client
@@ -37,8 +37,3 @@ npm run start
 ## ToDo
 
 
-이름(깃허브링크)	Position & Role
-김정훈(팀장)	💻 Front-end
-최소훈	💻 Front-end
-진가람	💻 Back-end
-박진현	💻 Full stack
