@@ -3,7 +3,7 @@ require("dotenv").config();
 const web3 = new Web3(process.env.NODE_URI);
 const { erc721ABI } = require('../Abi');
 const erc721Abi = erc721ABI();
-const erc721Contract = new web3.eth.Contract(erc721Abi, process.env.ERC721ADDR);
+const erc721Contract = new web3.eth.Contract(erc721Abi, process.env.ERC721_ADDRESS);
 
 module.exports = {
 
@@ -12,10 +12,10 @@ module.exports = {
         const sendAccount = process.env.SERVER_ADDRESS;
         const privateKey = process.env.SERVER_PRIVATE_KEY;    
         const nonce = await web3.eth.getTransactionCount(sendAccount, 'latest');
-        const data = erc721Contract.methods.setToken(process.env.ERC20ADDR).encodeABI();
+        const data = erc721Contract.methods.setToken(process.env.ERC20_ADDRESS).encodeABI();
         const tx = {
             from: sendAccount,
-            to: process.env.ERC721ADDR,
+            to: process.env.ERC721_ADDRESS,
             nonce: nonce,
             gas: 100000,
             data: data,
@@ -38,7 +38,7 @@ module.exports = {
     mintToken: async (receiveAccount, tokenUri,callDbupcall,userId,nftId) => {
         const sendAccount = process.env.SERVER_ADDRESS;
         const privateKey = process.env.SERVER_PRIVATE_KEY;
-        const own721CA = process.env.ERC721ADDR; 
+        const own721CA = process.env.ERC721_ADDRESS; 
         const nonce = await web3.eth.getTransactionCount(sendAccount, 'latest');
         const txData = erc721Contract.methods
             .mintNFT(receiveAccount, tokenUri)
