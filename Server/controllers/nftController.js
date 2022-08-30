@@ -1,12 +1,9 @@
 const {nft, post, user, comment} = require('../models');
 const erc721 = require("../contracts/erc721");
-
 const {isAuthorized} = require('./webToken')
-//const {mintToken} = require('./smartContract')
 const {asyncWrapper} = require("../errors/async");
 const CustomError = require("../errors/custom-error");
 const StatusCodes = require("http-status-codes");
-//const {sendToken} = require('./smartContract')
 
 module.exports = {
     //NFT 생성
@@ -75,25 +72,20 @@ module.exports = {
         });
 
         // NFT 구매
-        // console.log('----file url----',toUserData.address, fromNFTData.tokenURI);
         const callDbupcall = async (result,uid,nftId,tx_hash) => {
-            if(result){           
-                //console.log('------restoreToken: ' + result);                 
-                                
+            if(result){               
                 nft.sequelize.query("SELECT MAX(id) FROM nfts", { type: nft.sequelize.QueryTypes.SELECT})
                 .then(async (result) => {
                     const { 'MAX(id)': newTokenId } = result[0];
-                    //console.log('------queryresult: ',newTokenId);  
                     const fromNFTData = await nft.findOne({
                         where: {id: nftId}
                     });       
-                    const result1 = await fromNFTData.update({
+                    await fromNFTData.update({
                         userId: uid,
                         tokenId: newTokenId+1,
                         tx_hash: tx_hash,
                         isBuy: true,
                     });
-                    //console.log('------updateres: ',result1);
                     res.status(StatusCodes.OK).json({status: "successful operation"})
                 })  
             }
